@@ -1,17 +1,33 @@
 package com.equilibrium.item.vanilla_modify;
 
-import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
-import net.minecraft.core.component.DataComponents;
+import com.equilibrium.OnServerInitialize;
 import net.minecraft.world.item.Items;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
-public class MaxDamageModifier implements DefaultItemComponentEvents.ModifyCallback {
-    @Override
-    public void modify(DefaultItemComponentEvents.ModifyContext context) {
-        context.modify(Items.FISHING_ROD, builder -> {
-            builder.set(DataComponents.MAX_DAMAGE, 16);
+import java.lang.reflect.Field;
+
+@EventBusSubscriber(modid = OnServerInitialize.MOD_ID)
+public class MaxDamageModifier {
+
+    @SubscribeEvent
+    public static void onCommonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            setMaxDamage(Items.FISHING_ROD, 16);
+            setMaxDamage(Items.WOODEN_SHOVEL, 240);
         });
-        context.modify(Items.WOODEN_SHOVEL, builder -> {
-            builder.set(DataComponents.MAX_DAMAGE, 240);
-        });
+    }
+
+    private static void setMaxDamage(net.minecraft.world.item.Item item, int newMaxDamage) {
+        try {
+            Field field = net.minecraft.world.item.Item.class.getDeclaredField("maxDamage");
+            field.setAccessible(true);
+            field.setInt(item, newMaxDamage);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }

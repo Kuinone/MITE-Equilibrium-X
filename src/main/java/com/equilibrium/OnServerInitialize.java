@@ -18,9 +18,6 @@ import com.equilibrium.item.material.MaterialItems;
 import com.equilibrium.item.ModItemGroups;
 import com.equilibrium.item.miscellaneous.MiscellaneousItems;
 import com.equilibrium.item.tool.ToolItems;
-import com.equilibrium.item.vanilla_modify.FoodComponentModifier;
-import com.equilibrium.item.vanilla_modify.MaxDamageModifier;
-import com.equilibrium.item.vanilla_modify.MaxStackSizeModifier;
 import com.equilibrium.network.*;
 import com.equilibrium.server_and_client.server.SoundEventRegistry;
 import com.equilibrium.server_and_client.server.command.ServerCommands;
@@ -35,13 +32,6 @@ import com.equilibrium.tags.ModItemTags;
 import com.equilibrium.util.AdvancementRemover;
 import com.equilibrium.util.BooleanStorageUtil;
 import com.equilibrium.util.XpHashMap;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.fabricmc.fabric.api.item.v1.DefaultItemComponentEvents;
 import net.minecraft.SharedConstants;
 import net.minecraft.WorldVersion;
 import net.minecraft.core.BlockPos;
@@ -54,22 +44,22 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.storage.DataVersion;
 import net.minecraft.world.level.storage.LevelResource;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -82,14 +72,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static com.equilibrium.GlobalModConfig.initConfig;
-import static com.equilibrium.GlobalModConfig.isSleepChunksAlwaysLoading;
 import static com.equilibrium.block.CraftingDifficultyHelper.initCraftingDifficulties;
 import static com.equilibrium.difficulty_entry.DifficultyEntryGetter.isAnyExtraEntryExisting;
 import static com.equilibrium.difficulty_entry.DifficultyEntryRegister.initGameRules;
-
-import static com.equilibrium.item.vanilla_modify.FoodComponentModifier.foodComponentModify;
 import static com.equilibrium.server_and_client.server.event.CropIllnessEvent.updateCropBlockPos;
-import static com.equilibrium.server_and_client.server.event.SleepChunkLoaderEvents.registerSleepEvents;
 import static com.equilibrium.server_and_client.server.moonphase_tasks.MoonPhaseEvent.moonPhaseEvent;
 import static com.equilibrium.structure.ModPlacementGenerator.registerModOre;
 import static com.equilibrium.tags.ModBlockTags.registerModBlockTags;
@@ -97,59 +83,58 @@ import static com.equilibrium.tags.ModEntityTags.registerModEntityTags;
 import static com.equilibrium.tags.ModItemTags.registerModItemTags;
 import static com.equilibrium.util.BooleanStorageUtil.loadWorldInformation;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(OnServerInitialize.MOD_ID)
 public class OnServerInitialize {
-
-    //
-    public static void init() {
-        // 任务在mod加载时初始化,初始化僵尸破坏的方块进度
-        scheduler.scheduleAtFixedRate(() -> {
-            synchronized (BreakBlockGoal.blockBreakProgressMap) {
-                BreakBlockGoal.blockBreakProgressMap.clear();
-                System.out.println("Progress map cleared.");
-            }
-        }, 240, 240, TimeUnit.SECONDS);  // 30秒后首次运行，以后每隔30秒执行一次
-    }
-
-    public static void initXpMap() {
-        XpHashMap.setXpForLevel(1, 10);
-        XpHashMap.setXpForLevel(2, 50);
-        XpHashMap.setXpForLevel(3, 100);
-        XpHashMap.setXpForLevel(4, 200);
-        XpHashMap.setXpForLevel(5, 500);
-    }
-
-
-
-
 
     public static final String MOD_ID = "miteequilibrium";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final BooleanProperty FERTILIZED = BooleanProperty.create("fertilized");
     public static final IntegerProperty GRASSBLOCK_POLLUTED = IntegerProperty.create("grassblock_polluted", 0, 7);
     public static final BooleanProperty CROP_IS_ILLNESS = BooleanProperty.create("crop_illness");
+
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    //服务器状态
-    public StateSaverAndLoader serverState;
-    public OnServerInitialize(IEventBus modEventBus,ModContainer modContainer){
-        //初始化游戏规则
+    private StateSaverAndLoader serverState;
+    private int tickCount = 0;
+    private static final int TICK_INTERVAL = 500;
+
+    public OnServerInitialize(IEventBus modEventBus, ModContainer modContainer) {
+        // 初始化游戏规则（必须在早期调用）
         initGameRules();
 
-        //S->C,发包
+        // 注册网络包（服务端）
         S2CStockChangeGrassColorPacket.registerOnServer();
         S2CIllnessTextureBooleanPacket.registerOnServer();
         S2CGameRuleSyncPayloadForBooleanPacket.registerOnServer();
 
-        //C->S,发包、接收
-        C2SClickTimesPacket.registerOnServer();
-        C2STriggerContentChangePacket.registerOnServer();
+        // 注册所有 DeferredRegister
+        registerDeferredRegisters(modEventBus);
 
+        // 注册结构 FEATURES 到模组事件总线
+        StructureRegister.FEATURES.register(modEventBus);
 
-        //DeferredRegister风格下,所有要注册的物品,先触发类加载
-        //方块等注册暂时使用@EventBusSubscriber + helper.register方法
+        // 注册熔炉实体
+        FurnaceEntityRegistry.BLOCK_ENTITY_TYPES.register(modEventBus);
 
-        //物品注册
+        // 注册自定义世界版本
+        SharedConstants.CURRENT_VERSION = new CustomWorldVersion();
+
+        // 订阅 NeoForge 事件bus
+        NeoForge.EVENT_BUS.register(this);
+
+        // 启动定时清理任务
+        scheduler.scheduleAtFixedRate(() -> {
+            synchronized (BreakBlockGoal.blockBreakProgressMap) {
+                BreakBlockGoal.blockBreakProgressMap.clear();
+                LOGGER.debug("Progress map cleared.");
+            }
+        }, 240, 240, TimeUnit.SECONDS);
+
+        // 初始化经验映射
+        initXpMap();
+    }
+
+    private void registerDeferredRegisters(IEventBus modEventBus) {
+        // 物品
         MaterialItems.ITEMS.register(modEventBus);
         FoodItems.ITEMS.register(modEventBus);
         ArmorItems.ITEMS.register(modEventBus);
@@ -157,7 +142,7 @@ public class OnServerInitialize {
         CoinItems.ITEMS.register(modEventBus);
         MiscellaneousItems.ITEMS.register(modEventBus);
 
-        //方块物品注册
+        // 方块及对应物品
         AnvilBlocks.ITEMS.register(modEventBus);
         CraftingTableBlocks.ITEMS.register(modEventBus);
         EnchantingTableBlocks.ITEMS.register(modEventBus);
@@ -174,238 +159,224 @@ public class OnServerInitialize {
         MiscellaneousBlocks.BLOCKS.register(modEventBus);
         OreBlocks.BLOCKS.register(modEventBus);
 
-        //物品栏注册
+        // 创造模式物品栏
         ModItemGroups.TABS.register(modEventBus);
 
-        // 注册声音事件
+        // 声音事件
         SoundEventRegistry.SOUND_EVENTS.register(modEventBus);
 
-        // 注册矿物(Fabric)
-        registerModOre();
-
-        //注册结构
-        NeoForge.EVENT_BUS.addListener(this::onServerAboutToStart);
-        StructureRegister.FEATURES.register(modEventBus);
-
-        //效果注册
+        // 状态效果
         RegisterStatusEffect.MOB_EFFECTS.register(modEventBus);
-        //熔炉实体注册
-        FurnaceEntityRegistry.BLOCK_ENTITY_TYPES.register(modEventBus);
-
-        SharedConstants.CURRENT_VERSION = new WorldVersion() {
-
-            @Override
-            public @NotNull DataVersion getDataVersion() {
-                return new DataVersion(110111, "MITE:Equilibrium-NeoForge-Beta");
-            }
-
-            @Override
-            public @NotNull String getId() {
-                return "108109";
-            }
-
-            @Override
-            public @NotNull String getName() {
-                return "MITE:Equilibrium Beta v1.1.0_7";
-            }
-
-            @Override
-            public int getProtocolVersion() {
-                return 108109;
-            }
-
-            @Override
-            public int getPackVersion(@NotNull PackType packType) {
-                return 34;
-            }
-
-            @Override
-            public @NotNull Date getBuildTime() {
-                return new Date();
-            }
-
-            @Override
-            public boolean isStable() {
-                return true;
-            }
-        };
     }
-    private static final int TICK_INTERVAL = 500; // 每隔500 tick检查一次
-    private int tickCount = 0; // 记录当前 tick
+
+    // 原 onServerAboutToStart 改为监听 ServerStartingEvent（或 ServerStartedEvent）
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event) {
+        // 注册结构到生物群系
+        StructureRegister.addFeatureToBiomes();
+    }
 
     @SubscribeEvent
-    //需要进行手动注册到addListener中
-    public void onServerAboutToStart(ServerAboutToStartEvent event) {
-        StructureRegister.addFeatureToBiomes();
+    public void onServerStarted(ServerStartedEvent event) {
+        var server = event.getServer();
 
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+        // 成就删除
+        AdvancementRemover.removeAllMinecraftAdvancements(server.getAdvancements().tree());
 
+        // 锁定难度
+        server.setDifficultyLocked(true);
 
-            //成就删除
-            AdvancementRemover.removeAllMinecraftAdvancements(server.getAdvancements().tree());
+        // 读取持久状态
+        serverState = StateSaverAndLoader.getServerState(server);
 
-
-            //锁定游戏难度
-            server.setDifficultyLocked(true);
-
-            //读取服务器持久状态数据
-            serverState = StateSaverAndLoader.getServerState(server);
-
-
-            CropIllnessEvent.CROP_BLOCK_POS = MapNbtSerializer.fromNbt(
-                    serverState.mapNbt2,
-                    dis -> {
-                        try {
-                            return new BlockPos(dis.readInt(), dis.readInt(), dis.readInt());
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    },
-                    dis -> {
-                        try {
-                            return dis.readBoolean();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    },
-                    ConcurrentHashMap::new);
-
-
-            //之前的土地污染map被存在了nbt里,现在把它取出来
-            //读取土地污染map
-
-            S2CStockChangeGrassColorPacket.BLOCK_POS_INTEGER_CONCURRENT_HASH_MAP = MapNbtSerializer.fromNbt(
-                    serverState.mapNbt1,
-                    dis -> {
-                        try {
-                            return new BlockPos(dis.readInt(), dis.readInt(), dis.readInt());
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    },
-                    dis -> {
-                        try {
-                            return dis.readInt();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    },
-                    ConcurrentHashMap::new
-            );
-        });
-
-        //注册事件
-        PlayerBlockBreakEvents.AFTER.register(new BreakBlockEvent());
-        if (isSleepChunksAlwaysLoading())
-            registerSleepEvents();
-
-        // 注册服务器 tick 事件
-        ServerTickEvents.START_SERVER_TICK.register(server -> {
-
-            serverState = StateSaverAndLoader.getServerState(server);
-
-            //更新服务器状态,在这里修改的所有数据都会被保存
-            if (tickCount % (TICK_INTERVAL / 10) == 0) {
-
-                //保存土地污染map,这个map被网络包定义的一个static的map共享,现在把它读取到nbt然后保存,不需要传参因为可以断定要传送的数据位置
-                serverState.saveMapNbtToBuffer1();
-                //保存生病农作物的map
-                serverState.saveMapNbtToBuffer2();
-
-                boolean isGrandStageClear = false;
-                Path path = server.getWorldPath(LevelResource.ROOT).normalize().resolve("WorldInformationRecorder.dat");
-                BooleanStorageUtil.WorldInformationRecorder worldInformationRecorder = loadWorldInformation(path.toString());
-                if (worldInformationRecorder != null && worldInformationRecorder.getIsGrandStageClear()==true) {
-                    isGrandStageClear  = true;
-                }
-
-                if((isAnyExtraEntryExisting(server,null))&& !isGrandStageClear){
-                    server.setDifficulty(Difficulty.HARD,true);
-                    boolean allowCommands = server.getWorldData().isAllowCommands();
-                    List<ServerPlayer> playerList = server.getPlayerList().getPlayers();
-                    boolean isAnyCreativeOrSpectator = playerList.stream().allMatch(player -> player.isCreative()||player.isSpectator());
-                    boolean isPlayerExisting = !playerList.isEmpty();
-                    if(isPlayerExisting && (allowCommands || isAnyCreativeOrSpectator)){
-                        playerList.forEach(serverPlayerEntity -> serverPlayerEntity.displayClientMessage(Component.literal("检测到错误的世界设置,服务器将在不久后强制清除玩家"),true) );
-                        new Thread(() -> {
-                            try {
-                                Thread.sleep(8000);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                                return; // 被中断则不再执行后续任务
-                            }
-                            if (server.isRunning()) {
-                                server.execute(() -> {
-                                    if (server.isRunning()) {
-                                        server.getPlayerList().removeAll();
-                                    }
-                                });
-                            }
-                        }).start();
+        // 读取农作物疾病位置
+        CropIllnessEvent.CROP_BLOCK_POS = MapNbtSerializer.fromNbt(
+                serverState.mapNbt2,
+                dis -> {
+                    try {
+                        return new BlockPos(dis.readInt(), dis.readInt(), dis.readInt());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
+                },
+                dis -> {
+                    try {
+                        return dis.readBoolean();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                ConcurrentHashMap::new
+        );
 
+        // 读取土地污染map
+        S2CStockChangeGrassColorPacket.BLOCK_POS_INTEGER_CONCURRENT_HASH_MAP = MapNbtSerializer.fromNbt(
+                serverState.mapNbt1,
+                dis -> {
+                    try {
+                        return new BlockPos(dis.readInt(), dis.readInt(), dis.readInt());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                dis -> {
+                    try {
+                        return dis.readInt();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                ConcurrentHashMap::new
+        );
 
-                }
-
-
-            }
-
-
-            // 每隔 TICK_INTERVAL 次 tick 触发一次检查
-            tickCount++;
-            //获取时间,得到月相,决定是否触发月相事件
-
-            ServerLevel serverOverWorld = moonPhaseEvent(server);
-            //护甲更新,玩家游戏模式更新,作物状态更新
-            if (tickCount % (TICK_INTERVAL / 10) == 0) {
-                for (ServerPlayer serverPlayerEntity : server.getPlayerList().getPlayers()) {
-                    UpdateArmorEvent.updatePlayerArmor(serverPlayerEntity);
-//					if(serverPlayerEntity.isCreative())
-//						serverPlayerEntity.changeGameMode(GameMode.SURVIVAL);
-                }
-                updateCropBlockPos(serverOverWorld);
-            }
-
-            if (tickCount >= TICK_INTERVAL) {
-                tickCount = 0; // 重置 tick 计数器
-            }
-        });
-
-        //使用物品监听器,能不在这里写就不要在这里写,用物品自带的onUse方法
-        //合成金属镐监听器
-        CraftingMetalPickAxeCallback.EVENT.register(OnCraftingMetalPickAxe::onCraftingMetalPickAxe);
-        //命令注册
-        CommandRegistrationCallback.EVENT.register(ServerCommands::registerCommands);
-
-
-        UseItemCallback.EVENT.register(OnItemUseEvent::onUseItem);
-
-        //移除原版工作台方块,创造模式除外
-        UseBlockCallback.EVENT.register(UseBlockActionUtil::canUseVanillaCraftingTable);
     }
 
-    /**
-     * 在所有注册完成后初始化依赖物品/方块的逻辑
-     */
+    // 服务器 Tick 事件
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent.Post event) {
+        var server = event.getServer();
+        if (server == null) return;
+
+        tickCount++;
+
+        if (tickCount % (TICK_INTERVAL / 10) == 0) {
+            // 获取世界
+            ServerLevel overWorld = server.getLevel(ServerLevel.OVERWORLD);
+            if (overWorld != null) {
+                // 月相事件
+                moonPhaseEvent(server);
+                // 更新农作物
+                updateCropBlockPos(overWorld);
+            }
+
+            // 更新玩家护甲
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                UpdateArmorEvent.updatePlayerArmor(player);
+            }
+
+            // 保存持久状态（每周期保存）
+            if (serverState != null) {
+                serverState.saveMapNbtToBuffer1();
+                serverState.saveMapNbtToBuffer2();
+            }
+
+            checkAndHandleInvalidWorld(server);
+        }
+
+        if (tickCount >= TICK_INTERVAL) {
+            tickCount = 0;
+        }
+    }
+
+    private void checkAndHandleInvalidWorld(net.minecraft.server.MinecraftServer server) {
+        boolean isGrandStageClear = false;
+        Path path = server.getWorldPath(LevelResource.ROOT).normalize().resolve("WorldInformationRecorder.dat");
+        BooleanStorageUtil.WorldInformationRecorder recorder = loadWorldInformation(path.toString());
+        if (recorder != null && recorder.getIsGrandStageClear()) {
+            isGrandStageClear = true;
+        }
+
+        if (isAnyExtraEntryExisting(server, null) && !isGrandStageClear) {
+            server.setDifficulty(Difficulty.HARD, true);
+            boolean allowCommands = server.getWorldData().isAllowCommands();
+            List<ServerPlayer> players = server.getPlayerList().getPlayers();
+            boolean anyCreativeOrSpectator = players.stream().anyMatch(p -> p.isCreative() || p.isSpectator());
+            boolean hasPlayers = !players.isEmpty();
+
+            if (hasPlayers && (allowCommands || anyCreativeOrSpectator)) {
+                players.forEach(p -> p.displayClientMessage(
+                        Component.literal("检测到错误的世界设置,服务器将在不久后强制清除玩家"), true
+                ));
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(8000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                    if (server.isRunning()) {
+                        server.execute(() -> {
+                            if (server.isRunning()) {
+                                server.getPlayerList().removeAll();
+                            }
+                        });
+                    }
+                }).start();
+            }
+        }
+    }
+
+    // 注册命令事件
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        ServerCommands.registerCommands(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public void onItemUse(PlayerInteractEvent.RightClickItem event) {
+        OnItemUseEvent.onUseItem(event.getEntity(), event.getLevel(), event.getHand());
+    }
+    @SubscribeEvent
+    public void onBlockUse(PlayerInteractEvent.RightClickBlock event) {
+        UseBlockActionUtil.canUseVanillaCraftingTable(event.getEntity(), event.getLevel(), event.getHitVec());
+    }
+
     @SubscribeEvent
     public void onCommonSetup(FMLCommonSetupEvent event) {
-        // 此时所有物品、方块均已注册，字段非 null
-        event.enqueueWork(CraftingDifficultyHelper::initCraftingDifficulties);
-        event.enqueueWork(ModBlockTags::registerModBlockTags);
-        event.enqueueWork(ModEntityTags::registerModEntityTags);
-        event.enqueueWork(ModItemTags::registerModItemTags);
-        event.enqueueWork(GlobalModConfig::initConfig);
-        event.enqueueWork(OnServerInitialize::initXpMap);
+        event.enqueueWork(() -> {
+            CraftingDifficultyHelper.initCraftingDifficulties();
+            ModBlockTags.registerModBlockTags();
+            ModEntityTags.registerModEntityTags();
+            ModItemTags.registerModItemTags();
+            GlobalModConfig.initConfig();
+            initXpMap();
 
-        //原版物品修改
-        DefaultItemComponentEvents.MODIFY.register(new MaxStackSizeModifier());
-        DefaultItemComponentEvents.MODIFY.register(new MaxDamageModifier());
-        //食物修改
-        event.enqueueWork(FoodComponentModifier::foodComponentModify);
-
-
-
+            // FoodComponentModifier.foodComponentModify();
+        });
     }
 
-}
+    public static void initXpMap() {
+        XpHashMap.setXpForLevel(1, 10);
+        XpHashMap.setXpForLevel(2, 50);
+        XpHashMap.setXpForLevel(3, 100);
+        XpHashMap.setXpForLevel(4, 200);
+        XpHashMap.setXpForLevel(5, 500);
+    }
 
+    private static class CustomWorldVersion implements WorldVersion {
+        @Override
+        public @NotNull DataVersion getDataVersion() {
+            return new DataVersion(110111, "MITE:Equilibrium-NeoForge-1.7X-Alpha");
+        }
+
+        @Override
+        public @NotNull String getId() {
+            return "108109";
+        }
+
+        @Override
+        public @NotNull String getName() {
+            return "MITE:Equilibrium NeoForge 1.7X Alpha";
+        }
+
+        @Override
+        public int getProtocolVersion() {
+            return 108109;
+        }
+
+        @Override
+        public int getPackVersion(@NotNull PackType packType) {
+            return 34;
+        }
+
+        @Override
+        public @NotNull Date getBuildTime() {
+            return new Date();
+        }
+
+        @Override
+        public boolean isStable() {
+            return true;
+        }
+    }
+}

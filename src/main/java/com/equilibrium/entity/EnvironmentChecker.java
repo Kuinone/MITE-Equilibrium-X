@@ -2,7 +2,7 @@ package com.equilibrium.entity;
 
 import com.equilibrium.entity.path_finder.AStarCanGoToAndReturn;
 import com.equilibrium.network.S2CIllnessTextureBooleanPacket;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -24,41 +24,27 @@ import static com.equilibrium.difficulty_entry.DifficultyEntryRegister.ENABLE_AD
 import static com.equilibrium.entity.EnvironmentChecker.Navigation.canNavigateToSurfaceGrass;
 import static com.equilibrium.entity.EnvironmentChecker.Navigation.canNavigateToSurfaceWater;
 
-
 public class EnvironmentChecker {
 
     private final PathfinderMob entity;
-
     private final int environmentCheckInterValTime;
-
     private int checkEnvironmentIsSuitableTime;
-
     private int grassBlockLackTimes;
-
     private int grassWaterLackTimes;
-
     private int grassLackTimes;
-
     private int waterLackTimes;
-
     private boolean lastIllnessState = false;
-
-
     private boolean shouldWaitPlayers = true;
-
 
     public EnvironmentChecker(PathfinderMob entity, int environmentCheckInterValTime) {
         this.entity = entity;
         this.environmentCheckInterValTime = environmentCheckInterValTime;
         this.checkEnvironmentIsSuitableTime = this.environmentCheckInterValTime;
-
     }
-
 
     private int tickCount = 100;
 
     public void tickTask() {
-
         this.tickCount--;
         if (this.entity.level() instanceof ServerLevel serverWorld) {
             this.initIfNeeded(serverWorld);
@@ -69,7 +55,6 @@ public class EnvironmentChecker {
                 tickCount = 100;
             }
         }
-
         this.checkEnvironment();
     }
 
@@ -79,13 +64,12 @@ public class EnvironmentChecker {
         }
     }
 
-
     private void updateSkin(ServerLevel world) {
         for (ServerPlayer player : world.players()) {
-            // 检查玩家是否在同一个维度且能看到实体
             if (player.level().dimension() == this.entity.level().dimension() &&
                     player.hasLineOfSight(this.entity)) {
-                ServerPlayNetworking.send(
+
+                PacketDistributor.sendToPlayer(
                         player,
                         new S2CIllnessTextureBooleanPacket.IllnessAppearancePayload(this.entity.getId(), isIllness())
                 );
@@ -94,10 +78,9 @@ public class EnvironmentChecker {
     }
 
     private void updateSkinWithoutLimit(ServerLevel world) {
-        //Init时只有生病时才发包,或周期发包
         if (this.isIllness()) {
             for (ServerPlayer player : world.players()) {
-                ServerPlayNetworking.send(
+                PacketDistributor.sendToPlayer(
                         player,
                         new S2CIllnessTextureBooleanPacket.IllnessAppearancePayload(this.entity.getId(), isIllness())
                 );
@@ -108,7 +91,6 @@ public class EnvironmentChecker {
     public void renderIllnessSkinIfNeeded(ServerLevel world) {
         boolean currentIllness = isIllness();
         if (currentIllness != this.lastIllnessState) {
-            // 状态改变了，发送网络包
             this.updateSkin(world);
             lastIllnessState = currentIllness;
         }
@@ -119,7 +101,6 @@ public class EnvironmentChecker {
             passiveEntity.setAge(passiveEntity.getAge() - 1);
         }
     }
-
 
     public void readCustomDataFromNbt(CompoundTag nbt) {
         this.checkEnvironmentIsSuitableTime = nbt.getInt("checkEnvironmentIsSuitableTime");
@@ -135,9 +116,7 @@ public class EnvironmentChecker {
         nbt.putInt("grassWaterLackTimes", this.grassWaterLackTimes);
         nbt.putInt("grassLackTimes", this.grassLackTimes);
         nbt.putInt("waterLackTimes", this.waterLackTimes);
-
     }
-
 
     public boolean isIllness() {
         return this.grassBlockLackTimes > 3 || this.grassWaterLackTimes > 3 || this.grassLackTimes > 3 || this.waterLackTimes > 3;
@@ -153,22 +132,18 @@ public class EnvironmentChecker {
     }
 
     public void initIfNeeded(ServerLevel serverWorld) {
-        //初始状态,直到服务器有人,则发包
-        //后续shouldWaitPlayers=false,不再init
         if (shouldWaitPlayers && !serverWorld.players().isEmpty()) {
             updateSkinWithoutLimit(serverWorld);
             shouldWaitPlayers = false;
         }
     }
 
-
     public void checkEnvironment() {
-        //高级动物AI:检查环境方面
-        if(this.entity.level() instanceof ServerLevel serverWorld)
-            if(!getGameBooleanRuleFromServer(ENABLE_ADVANCE_ANIMAL_AI,serverWorld.getServer()))
+        if (this.entity.level() instanceof ServerLevel serverWorld)
+            if (!getGameBooleanRuleFromServer(ENABLE_ADVANCE_ANIMAL_AI, serverWorld.getServer()))
                 return;
 
-        if (this.entity.isBaby()||this.isIllness())
+        if (this.entity.isBaby() || this.isIllness())
             this.checkEnvironmentIsSuitableTime = this.checkEnvironmentIsSuitableTime - 4;
         else
             this.checkEnvironmentIsSuitableTime--;
@@ -176,8 +151,6 @@ public class EnvironmentChecker {
             return;
         }
 
-
-        //检查环境
         if (!checkFootBlockIsGrassBlock()) {
             this.grassBlockLackTimes++;
         } else
@@ -193,17 +166,13 @@ public class EnvironmentChecker {
         } else
             this.grassLackTimes = 0;
 
-
         this.checkEnvironmentIsSuitableTime = this.environmentCheckInterValTime;
-
     }
 
     private boolean checkFootBlockIsGrassBlock() {
-
         BlockState blockState = this.entity.level().getBlockState(this.entity.blockPosition().below());
         return blockState.is(Blocks.GRASS_BLOCK);
     }
-
 
     private boolean checkWater() {
         return canNavigateToSurfaceWater(this.entity);
@@ -213,8 +182,7 @@ public class EnvironmentChecker {
         return canNavigateToSurfaceGrass(this.entity);
     }
 
-
-    public static class Navigation{    // 计算距离平方的辅助方法
+    public static class Navigation {
         public static double getSquaredDistance(BlockPos pos, double x, double y, double z) {
             double dx = pos.getX() + 0.5 - x;
             double dy = pos.getY() + 0.5 - y;
@@ -223,98 +191,70 @@ public class EnvironmentChecker {
         }
 
         public static boolean canNavigateToSurfaceWater(PathfinderMob entity) {
-
             Level world = entity.level();
-
-            // 以生物为中心，搜索16格范围内的方块
             int searchRadius = 16;
             int x = entity.blockPosition().getX();
             int y = entity.blockPosition().getY();
             int z = entity.blockPosition().getZ();
 
-
             ArrayList<BlockPos> posArrayList = new ArrayList<>();
 
-            // 从左上角到右下角顺序搜索
             for (int dx = -searchRadius; dx <= searchRadius; dx++) {
                 for (int dz = -searchRadius; dz <= searchRadius; dz++) {
                     for (int dy = -4; dy <= 4; dy++) {
-                        // 计算当前搜索位置的世界坐标
                         int worldX = x + dx;
                         int worldY = y + dy;
                         int worldZ = z + dz;
-
-                        // 获取方块
                         BlockPos pos = new BlockPos(worldX, worldY, worldZ);
                         BlockState blockState = world.getBlockState(pos);
-
                         boolean isWater = blockState.getBlock() == Blocks.WATER ||
                                 blockState.getFluidState().getType() == Fluids.WATER ||
                                 blockState.getFluidState().getType() == Fluids.FLOWING_WATER;
-
                         if (isWater) {
                             posArrayList.add(pos);
                         }
                     }
-
                 }
             }
 
             if (!posArrayList.isEmpty()) {
-
                 posArrayList.sort((pos1, pos2) -> {
                     double dist1 = getSquaredDistance(pos1, x, y, z);
                     double dist2 = getSquaredDistance(pos2, x, y, z);
                     return Double.compare(dist1, dist2);
                 });
-
-
                 for (BlockPos pos : posArrayList) {
-                    //找到通往水面之上的路径
                     List<BlockPos> list = AStarCanGoToAndReturn.findSimplePath(entity.level(), entity.blockPosition(), pos.above());
                     if (list != null) {
-//                    drawPath(list, world);
-                        //导航到水附近
                         entity.getNavigation().moveTo(pos.getX(), pos.getY() + 1, pos.getZ(), 1);
                         return true;
                     }
-
                 }
             }
             return false;
         }
 
         public static boolean canNavigateToSurfaceGrass(PathfinderMob entity) {
-
             Level world = entity.level();
-
-            // 以生物为中心，搜索16格范围内的方块
             int searchRadius = 16;
             int x = entity.blockPosition().getX();
             int y = entity.blockPosition().getY();
             int z = entity.blockPosition().getZ();
 
-
             ArrayList<BlockPos> posArrayList = new ArrayList<>();
 
-            // 从左上角到右下角顺序搜索
             for (int dx = -searchRadius; dx <= searchRadius; dx++) {
                 for (int dz = -searchRadius; dz <= searchRadius; dz++) {
                     for (int dy = -4; dy <= 4; dy++) {
-                        // 计算当前搜索位置的世界坐标
                         int worldX = x + dx;
                         int worldY = y + dy;
                         int worldZ = z + dz;
-
-                        // 获取方块
                         BlockPos pos = new BlockPos(worldX, worldY, worldZ);
                         BlockState blockState = world.getBlockState(pos);
-
                         if (blockState.is(Blocks.SHORT_GRASS) || blockState.is(Blocks.TALL_GRASS)) {
                             posArrayList.add(pos);
                         }
                     }
-
                 }
             }
 
@@ -325,15 +265,11 @@ public class EnvironmentChecker {
                     return Double.compare(dist1, dist2);
                 });
                 for (BlockPos pos : posArrayList) {
-                    //找到通往草的路径
                     List<BlockPos> list = AStarCanGoToAndReturn.findSimplePath(entity.level(), entity.blockPosition(), pos);
                     if (list != null) {
-                        //导航到草附近
-//                    drawPath(list, world);
                         entity.getNavigation().moveTo(pos.getX(), pos.getY() + 1, pos.getZ(), 1);
                         return true;
                     }
-
                 }
             }
             return false;
@@ -350,8 +286,7 @@ public class EnvironmentChecker {
 
                 new Thread(() -> {
                     try {
-                        Thread.sleep(3000); // 10秒 = 10000毫秒
-                        // 延迟结束后，在服务器主线程执行方块操作
+                        Thread.sleep(3000);
                         world.getServer().execute(() -> {
                             world.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
                         });
@@ -360,7 +295,6 @@ public class EnvironmentChecker {
                     }
                 }).start();
             }
-        }}
-
-
+        }
+    }
 }

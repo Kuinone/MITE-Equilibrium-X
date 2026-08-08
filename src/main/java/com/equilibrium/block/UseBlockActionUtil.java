@@ -22,7 +22,7 @@ public class UseBlockActionUtil {
         return isTableBlocked;
     }
 
-    public static InteractionResult canUseVanillaCraftingTable(Player player, Level world, InteractionHand hand , BlockHitResult hitResult){
+    public static InteractionResult canUseVanillaCraftingTable(Player player, Level world, BlockHitResult hitResult){
         Block block = world.getBlockState(hitResult.getBlockPos()).getBlock();
         if (!player.level().isClientSide) {
             if (!player.isCreative()) {

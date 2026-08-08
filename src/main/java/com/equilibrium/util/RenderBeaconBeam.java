@@ -1,16 +1,19 @@
 package com.equilibrium.util;
 
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
-/**
- * 超简信标系统 - 仅根据世界时间控制
- */
+import static com.equilibrium.OnServerInitialize.MOD_ID;
+
+@EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
 public class RenderBeaconBeam {
-
 
     private static Vec3 beamPos = null;
     private static long startTick = 0;
@@ -21,46 +24,47 @@ public class RenderBeaconBeam {
     }
 
     public static void RenderBeaconInit() {
-        WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
-            if (beamPos == null) return;
-
-            var client = Minecraft.getInstance();
-            if (client.level == null) return;
-
-            // 检查是否超过20分钟 (24000 ticks)
-            if (client.level.getDayTime() - startTick > 24000) {
-                beamPos = null;
-                return;
-            }
-
-            renderBeam(context, beamPos);
-        });
+        // 由事件总线自动注册，无需操作
     }
 
-    private static void renderBeam(WorldRenderContext context, Vec3 pos) {
-        var client = Minecraft.getInstance();
+    @SubscribeEvent
+    public static void onRenderLevel(RenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+            return;
+        }
+
+        if (beamPos == null) return;
+
+        Minecraft client = Minecraft.getInstance();
         if (client.level == null) return;
 
-        var camera = context.camera().getPosition();
-        double x = pos.x() + 0.5 - camera.x;
-        double y = pos.y() + 1.0 - camera.y;
-        double z = pos.z() + 0.5 - camera.z;
+        if (client.level.getDayTime() - startTick > 24000) {
+            beamPos = null;
+            return;
+        }
 
-        context.matrixStack().pushPose();
-        context.matrixStack().translate(x, y, z);
+        MultiBufferSource bufferSource = client.renderBuffers().bufferSource();
+        renderBeam(event.getPoseStack(), bufferSource, event.getCamera().getPosition(), client);
+    }
 
-        // 尝试获取 tickDelta，失败则使用1.0
+    private static void renderBeam(PoseStack poseStack, MultiBufferSource bufferSource, Vec3 cameraPos, Minecraft client) {
+        double x = beamPos.x + 0.5 - cameraPos.x;
+        double y = beamPos.y + 1.0 - cameraPos.y;
+        double z = beamPos.z + 0.5 - cameraPos.z;
+
+        poseStack.pushPose();
+        poseStack.translate(x, y, z);
+
         float tickDelta;
         try {
             tickDelta = client.getTimer().getGameTimeDeltaPartialTick(false);
         } catch (Exception e) {
-            // 忽略
-            tickDelta=1.0f;
+            tickDelta = 1.0f;
         }
 
         BeaconRenderer.renderBeaconBeam(
-                context.matrixStack(),
-                context.consumers(),
+                poseStack,
+                bufferSource,
                 BeaconRenderer.BEAM_LOCATION,
                 tickDelta,
                 1.0f,
@@ -72,7 +76,7 @@ public class RenderBeaconBeam {
                 0.25f
         );
 
-        context.matrixStack().popPose();
+        poseStack.popPose();
     }
 
     public static void hide() {

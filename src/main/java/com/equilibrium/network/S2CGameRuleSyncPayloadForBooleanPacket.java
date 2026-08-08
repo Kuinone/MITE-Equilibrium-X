@@ -1,57 +1,59 @@
 package com.equilibrium.network;
 
 import com.equilibrium.OnServerInitialize;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameRules;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import static com.equilibrium.OnServerInitialize.MOD_ID;
 import static com.equilibrium.difficulty_entry.DifficultyEntryRegister.GET_ALL_ENTRY_KEY;
 
-public class S2CGameRuleSyncPayloadForBooleanPacket  {
-    public static final CustomPacketPayload.Type<S2CGameRuleSyncPayload> ID = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MOD_ID, "game_rule_sync"));
+@Mod(value = OnServerInitialize.MOD_ID)
+@EventBusSubscriber(modid = OnServerInitialize.MOD_ID)
+public class S2CGameRuleSyncPayloadForBooleanPacket {
 
+    public static final CustomPacketPayload.Type<S2CGameRuleSyncPayload> ID =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MOD_ID, "game_rule_sync"));
 
+    // ==================== 注册（NeoForge 事件） ====================
+    @SubscribeEvent
+    public static void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToClient(
+                S2CGameRuleSyncPayload.TYPE,
+                S2CGameRuleSyncPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    context.enqueueWork(() -> {
+                        // 正确获取 ClientLevel
+                        ClientLevel clientLevel = (ClientLevel) context.player().level();
+                        if (clientLevel == null) return;
 
-    private static void packetReceived() {
-        ClientPlayNetworking.registerGlobalReceiver(ID,
-                (payload, context) ->
-                        context.client().execute(() -> {
-                            //接收包也要做什么?把这个新规则更新到自己的Client环境中
-                            if(!GET_ALL_ENTRY_KEY.containsKey(payload.rulesId)){
-                                OnServerInitialize.LOGGER.error("This GameRule can not be changed");
-                                return; // 重要！
-                            }
+                        String ruleId = payload.rulesId;
+                        if (!GET_ALL_ENTRY_KEY.containsKey(ruleId)) {
+                            OnServerInitialize.LOGGER.error("This GameRule can not be changed");
+                            return;
+                        }
 
-                            GameRules.Key<GameRules.BooleanValue> booleanRuleKey = GET_ALL_ENTRY_KEY.get(payload.rulesId);
-                            ClientLevel clientWorld = context.client().level;
-
-                            clientWorld.getGameRules().getRule(booleanRuleKey).set(payload.gameRuleBooleanValue,null);
-
-                        }));
+                        GameRules.Key<GameRules.BooleanValue> booleanRuleKey = GET_ALL_ENTRY_KEY.get(ruleId);
+                        clientLevel.getGameRules().getRule(booleanRuleKey).set(payload.gameRuleBooleanValue, null);
+                    });
+                }
+        );
     }
 
-    public static void registerOnClient() {
-        //因为这里只有客户端接收,且信任服务端,故只做客户端的Receiver
-        packetReceived();
-    }
-
-
-    public static void registerOnServer() {
-        PayloadTypeRegistry.playS2C().register(ID, S2CGameRuleSyncPayload.CODEC);
-    }
-
-
-
-
-
-    public static class S2CGameRuleSyncPayload implements CustomPacketPayload{
-
+    // ==================== Payload 定义 ====================
+    public static class S2CGameRuleSyncPayload implements CustomPacketPayload {
+        public static final Type<S2CGameRuleSyncPayload> TYPE = ID;
 
         public final String rulesId;
         public final Boolean gameRuleBooleanValue;
@@ -61,36 +63,38 @@ public class S2CGameRuleSyncPayloadForBooleanPacket  {
             this.gameRuleBooleanValue = gameRuleValue;
         }
 
-
-        public static final StreamCodec<FriendlyByteBuf, S2CGameRuleSyncPayload> CODEC =
+        public static final StreamCodec<FriendlyByteBuf, S2CGameRuleSyncPayload> STREAM_CODEC =
                 StreamCodec.ofMember(
-                        // 编码器
-                        (S2CGameRuleSyncPayload payload, FriendlyByteBuf buf) -> {
-                            //按顺序编码
+                        (payload, buf) -> {
                             buf.writeUtf(payload.rulesId);
                             buf.writeBoolean(payload.gameRuleBooleanValue);
                         },
-                        // 解码器
-                        (FriendlyByteBuf buf) -> {
-                            String enableCraftingTimeAndLevel = buf.readUtf();
-                            Boolean gameRuleValue = buf.readBoolean();
-                            return new S2CGameRuleSyncPayload(enableCraftingTimeAndLevel, gameRuleValue);
+                        buf -> {
+                            String rulesId = buf.readUtf();
+                            Boolean value = buf.readBoolean();
+                            return new S2CGameRuleSyncPayload(rulesId, value);
                         }
                 );
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
-            return ID;
+            return TYPE;
         }
-
-
-
     }
 
+    // ==================== 服务端发送方法 ====================
+    public static void sendToPlayer(ServerPlayer player, S2CGameRuleSyncPayload payload) {
+        PacketDistributor.sendToPlayer(player, payload);
+    }
 
+    // ==================== 兼容旧调用（可选） ====================
+    @Deprecated
+    public static void registerOnServer() {
+        // 已自动注册
+    }
 
-
-
-
-
+    @Deprecated
+    public static void registerOnClient() {
+        // 已自动注册
+    }
 }

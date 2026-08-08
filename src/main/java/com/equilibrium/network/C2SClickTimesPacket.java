@@ -1,14 +1,19 @@
 package com.equilibrium.network;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import com.equilibrium.OnServerInitialize;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;  // ← 正确的导入
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.Map;
 import java.util.UUID;
@@ -17,71 +22,53 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.equilibrium.OnServerInitialize.MOD_ID;
 
 
+@EventBusSubscriber(modid = OnServerInitialize.MOD_ID)
 public class C2SClickTimesPacket {
 
     public static final ResourceLocation CLICK_TIMES_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, "right_click_times");
-
     public static final Map<UUID, Integer> playerClickTimes = new ConcurrentHashMap<>();
 
-
-    public static void registerOnServer() {
-        PayloadTypeRegistry.playC2S().register(ClickTimesPayload.ID, ClickTimesPayload.CODEC);
-        packetReceive();
-    }
-
-
-    private static void packetReceive() {
-        ServerPlayNetworking.registerGlobalReceiver(ClickTimesPayload.ID,
+    // ==================== 注册处理器 ====================
+    @SubscribeEvent
+    public static void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar registrar = event.registrar("1");  // 版本号，我不到啊
+        registrar.playToServer(
+                ClickTimesPayload.TYPE,
+                ClickTimesPayload.STREAM_CODEC,
                 (payload, context) -> {
-                    ServerPlayer player = context.player();
-                    UUID playerId = player.getUUID();
-                    int timesToAdd = payload.getTimes(); // 获取要增加的次数
-                    context.server().execute(() -> {
-                        playerClickTimes.put(playerId,timesToAdd);
+                    context.enqueueWork(() -> {
+                        Player player = context.player();
+                        if (player instanceof ServerPlayer serverPlayer) {
+                            playerClickTimes.put(serverPlayer.getUUID(), payload.times());
+                        }
                     });
-                });
+                }
+        );
     }
 
-
-    // 定义Payload实现
-    public static class ClickTimesPayload implements CustomPacketPayload {
-        public static final Type<ClickTimesPayload> ID =
+    // ==================== Payload 定义 ====================
+    public record ClickTimesPayload(int times) implements CustomPacketPayload {
+        public static final Type<ClickTimesPayload> TYPE =
                 new Type<>(CLICK_TIMES_PAYLOAD_ID);
 
-        private final int times; // 应该是final
-
-        public ClickTimesPayload(int times) {
-            this.times = times;
-        }
-
-        public int getTimes() {
-            return times;
-        }
+        public static final StreamCodec<FriendlyByteBuf, ClickTimesPayload> STREAM_CODEC =
+                StreamCodec.ofMember(
+                        (payload, buf) -> buf.writeVarInt(payload.times()),
+                        buf -> new ClickTimesPayload(buf.readVarInt())
+                );
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
-            return ID;
+            return TYPE;
         }
-
-        public static final StreamCodec<FriendlyByteBuf, ClickTimesPayload> CODEC =
-                StreamCodec.ofMember(
-                        // 编码器
-                        (ClickTimesPayload payload, FriendlyByteBuf buf) -> {
-                            buf.writeVarInt(payload.times); // 使用 writeVarInt 而不是 writeInt
-                        },
-                        // 解码器
-                        (FriendlyByteBuf buf) -> {
-                            int times = buf.readVarInt(); // 使用 readVarInt 而不是 readInt
-                            return new ClickTimesPayload(times);
-                        }
-                );
     }
 
-    // 客户端发送包的方法
+    // ==================== 客户端发送 ====================
     public static void sendClickTimes(int times) {
-        ClientPlayNetworking.send(new ClickTimesPayload(times));
+        PacketDistributor.sendToServer(new ClickTimesPayload(times));
     }
 
+    // ==================== 服务端数据操作 ====================
     public static int getClickTimes(Player player) {
         return playerClickTimes.getOrDefault(player.getUUID(), 0);
     }
@@ -90,9 +77,7 @@ public class C2SClickTimesPacket {
         playerClickTimes.remove(player.getUUID());
     }
 
-    // 可选：直接设置玩家的点击次数（如果需要）
     public static void setClickTimes(Player player, int times) {
         playerClickTimes.put(player.getUUID(), times);
-    }
+    } //哦不不不这方法咋没用啊
 }
-
