@@ -1,0 +1,57 @@
+{
+  "values": [
+    "miteequilibrium:iron_dagger",
+    "miteequilibrium:mithril_dagger",
+    "miteequilibrium:adamantium_dagger",
+
+    "miteequilibrium:iron_hammer",
+    "miteequilibrium:mithril_hammer",
+    "miteequilibrium:adamantium_hammer",
+
+    "miteequilibrium:iron_axe",
+    "miteequilibrium:mithril_axe",
+    "miteequilibrium:adamantium_axe",
+
+    "miteequilibrium:iron_hoe",
+    "miteequilibrium:mithril_hoe",
+    "miteequilibrium:adamantium_hoe",
+
+    "miteequilibrium:iron_shovel",
+    "miteequilibrium:mithril_shovel",
+    "miteequilibrium:adamantium_shovel",
+
+    "miteequilibrium:iron_pickaxe",
+    "miteequilibrium:mithril_pickaxe",
+    "miteequilibrium:adamantium_pickaxe",
+
+    "miteequilibrium:iron_sword",
+    "miteequilibrium:mithril_sword",
+    "miteequilibrium:adamantium_sword",
+
+    "minecraft:iron_ingot",
+    "miteequilibrium:mithril",
+    "miteequilibrium:adamantium",
+
+    "minecraft:iron_nugget",
+    "miteequilibrium:mithril_nugget",
+    "miteequilibrium:adamantium_nugget",
+
+    "minecraft:diamond",
+
+    "minecraft:iron_chestplate",
+    "minecraft:diamond_chestplate",
+    "miteequilibrium:mithril_chest_plate",
+
+    "minecraft:iron_boots",
+    "miteequilibrium:mithril_boots",
+    "minecraft:diamond_boots",
+
+    "minecraft:iron_helmet",
+    "miteequilibrium:mithril_helmet",
+    "minecraft:diamond_helmet",
+
+    "minecraft:iron_leggings",
+    "minecraft:diamond_leggings",
+    "miteequilibrium:mithril_leggings"
+  ]
+}
