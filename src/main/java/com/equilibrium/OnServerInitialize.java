@@ -328,6 +328,7 @@ public class OnServerInitialize {
             ModItemTags.registerModItemTags();
             GlobalModConfig.initConfig();
             initXpMap();
+            DamageSourceRegister.damageSourceInit();
         });
 
         // 注册表已完全加载，此时安全创建并注册事件监听器

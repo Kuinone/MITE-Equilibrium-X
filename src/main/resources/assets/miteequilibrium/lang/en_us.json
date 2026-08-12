@@ -1,5 +1,12 @@
 {
 
+
+  "death.attack.hurt_by_blue_berry": "%1$s was poked to death by a blue berry bush",
+
+
+
+  "book.miteequilibrium.equilibrium_guide.name": "Guide & Additional Supplementary Content",
+  "book.miteequilibrium.equilibrium_guide.landing_text": "Content condensed from nearly 50,000 characters of update logs, designed to help players get started quickly.",
   "adventure.brew_potion.title": "Witch's Technology",
   "adventure.enter_the_end.title": "MLG Water Bucket Challenge",
   "adventure.find_fortress.title": "Dark Fortress",
@@ -137,7 +144,7 @@
   "mod.selectWorld.bonusItems": "Generates structures which contain items to trigger initial advancements",
 
 
-  "death.attack.fatal_poison": "%1$s died from poison",
+  "death.attack.fatal_poison.player": "%1$s died from poison",
 
 
   "select.world.wrong.version": "You cannot load a world from an incompatible mod version",
@@ -399,25 +406,25 @@
   "mod.itemGroup.blocks_and_metallic_items": "Blocks and Metallic Items",
   "mod.itemGroup.farm": "Farm",
 
-  "gamerule.enableCraftingTimeAndLevel": "Enable Crafting Time And Level",
+  "gamerule.01enableCraftingTimeAndLevel": "Enable Crafting Time And Level",
 
-  "gamerule.enableSlowBreakingSpeed": "Enable Slow Breaking Speed",
-  "gamerule.enableCropIllness": "Enable Crop Illness Function",
-  "gamerule.enableAdvanceAnimalAI": "Enable Animal Advance AI",
-  "gamerule.enableRestrictVillageGen": "Enable Strict Village Generation Conditions",
-  "gamerule.enablePhytonutrient": "Enable Phytonutrient Function",
-  "gamerule.enableBloodMoonThunder": "Enable Weather Effect On BloodMoon",
-  "gamerule.disablePlayerTeleport": "Disable Teleport Commands Between Players",
+  "gamerule.02enableSlowBreakingSpeed": "Enable Slow Breaking Speed",
+  "gamerule.03enableCropIllness": "Enable Crop Illness Function",
+  "gamerule.04enableAdvanceAnimalAI": "Enable Animal Advance AI",
+  "gamerule.05enableRestrictVillageGen": "Enable Strict Village Generation Conditions",
+  "gamerule.06enablePhytonutrient": "Enable Phytonutrient Function",
+  "gamerule.07enableBloodMoonThunder": "Enable Weather Effect On BloodMoon",
+  "gamerule.08disablePlayerTeleport": "Disable Teleport Commands Between Players",
 
-  "gamerule.enableAnvilLevel": "Enable Anvil Level",
-  "gamerule.enableAdvancedEnchantingTable": "Enable Advanced Enchanting Table",
-  "gamerule.disableVillageAndPillage": "Desolation: Removes villages, their associated farmlands, and pillager outpost structures.",
-  "gamerule.enableMoreSlDamage": "Think Twice Before Action: SL actions cause significantly more health loss.",
-  "gamerule.enableNoAnimals": "Extinction: Cows, sheep, pigs, and chickens will no longer spawn.",
-  "gamerule.disableCropGrow": "Blight: Crops will no longer grow naturally.",
-  "gamerule.enableMoreRainWeather": "Rainy Season: Greatly increases the duration of rainy weather after a period of time.",
-  "gamerule.enableUniversalAggro": "Universal Aggro: Players will unconditionally provoke the aggression of Piglins and Endermen.",
-  "generator.miteequilibrium.classic_overworld":"Classic Overworld",
+
+  "gamerule.001disableVillageAndPillage": "Desolation: Removes villages, their associated farmlands, and pillager outpost structures.",
+  "gamerule.002enableMoreSlDamage": "Think Twice Before Action: SL actions cause significantly more health loss.",
+  "gamerule.003enableNoAnimals":  "Extinction: Cows, sheep, pigs, and chickens will no longer spawn.",
+  "gamerule.004enableMoreRainWeather": "Rainy Season: Greatly increases the duration of rainy weather after a period of time.",
+  "gamerule.005disableCropGrow": "Blight: Crops will no longer grow naturally.",
+  "gamerule.006enableUniversalAggro": "Universal Aggro: Players will unconditionally provoke the aggression of Piglins and Endermen.",
+  "gamerule.007enableAnvilLevel": "Enable Anvil Level",
+  "gamerule.008enableAdvancedEnchantingTable": "Enable Advanced Enchanting Table",
 
 
   "effect.miteequilibrium.insulin_resistance": "Diabetes"

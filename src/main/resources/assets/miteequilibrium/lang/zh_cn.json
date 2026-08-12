@@ -1,6 +1,10 @@
 {
 
+  "death.attack.hurt_by_blue_berry": "%1$s 被蓝莓丛刺死了",
 
+
+  "book.miteequilibrium.equilibrium_guide.name": "指引 & 额外补充内容",
+  "book.miteequilibrium.equilibrium_guide.landing_text": "从近五万个字符的更新日志中浓缩选取的内容，旨在快速帮助玩家入门。",
   "adventure.brew_potion.title": "女巫科技",
   "adventure.enter_the_end.title": "落地水大考验",
   "adventure.find_fortress.title": "黑暗要塞",
@@ -117,7 +121,7 @@
   "mod.options.difficulty.normal.info": "敌对生物会生成并造成标准伤害。饥饿条耗尽时会消耗生命值。",
   "mod.selectWorld.mapFeatures.info": "这是完成主要流程的必需选项",
   "mod.selectWorld.bonusItems": "用于生成触发初始成就的物品",
-  "death.attack.fatal_poison": "%1$s 毒发身亡",
+  "death.attack.fatal_poison.player": "%1$s 毒发身亡",
   "select.world.wrong.version": "你无法打开不可兼容版本的存档",
   "adventure.get_flint.description": "挖掘沙砾，获得燧石碎片，或是一整块燧石。",
   "adventure.brew_potion": "酿造出一瓶药水。\n现在所有药水的持续时间效果翻倍。",
@@ -294,22 +298,31 @@
   "mod.itemGroup.armors_and_tools": "工具与盔甲",
   "mod.itemGroup.blocks_and_metallic_items": "方块与金属制品",
   "mod.itemGroup.farm": "农业与食物",
-  "gamerule.enableCraftingTimeAndLevel": "启用合成耗时和合成台等级",
-  "gamerule.enableSlowBreakingSpeed": "启用标准挖掘速度",
-  "gamerule.enableCropIllness": "启用作物生病机制",
-  "gamerule.enableAdvanceAnimalAI": "启用高级动物AI",
-  "gamerule.enableRestrictVillageGen": "启用更严格的村庄和前哨站生成条件",
-  "gamerule.enablePhytonutrient": "启用营养不良机制",
-  "gamerule.enableBloodMoonThunder": "启用血月雷电",
-  "gamerule.disablePlayerTeleport": "禁用玩家间的传送指令：/teleportToPlayer",
-  "gamerule.enableAnvilLevel": "启用铁砧等级",
-  "gamerule.enableAdvancedEnchantingTable": "启用高级附魔台",
-  "gamerule.disableVillageAndPillage": "荒芜：移除了村庄、附属的农田和掠夺者前哨站结构",
-  "gamerule.enableMoreSlDamage": "三思而后行：SL行为会损失更多生命值",
-  "gamerule.enableNoAnimals": "灭绝：牛、羊、猪、鸡四种动物不再生成",
-  "gamerule.disableCropGrow": "荒疫：农作物不再自然生长",
-  "gamerule.enableMoreRainWeather": "雨季：一段时间后大幅提高世界下雨的时长",
-  "gamerule.enableUniversalAggro": "众矢之的：玩家会无条件引起猪人和末影人的仇恨",
+  "gamerule.01enableCraftingTimeAndLevel": "启用合成耗时和合成台等级",
+  "gamerule.02enableSlowBreakingSpeed": "启用标准挖掘速度",
+  "gamerule.03enableCropIllness": "启用作物生病机制",
+  "gamerule.04enableAdvanceAnimalAI": "启用高级动物AI",
+  "gamerule.05enableRestrictVillageGen": "启用更严格的村庄和前哨站生成条件",
+  "gamerule.06enablePhytonutrient": "启用营养不良机制",
+  "gamerule.07enableBloodMoonThunder": "启用血月雷电",
+  "gamerule.08disablePlayerTeleport": "禁用玩家间的传送指令：/teleportToPlayer",
+
+  "gamerule.001disableVillageAndPillage": "荒芜：移除了村庄、附属的农田和掠夺者前哨站结构",
+  "gamerule.002enableMoreSlDamage": "三思而后行：SL行为会损失更多生命值",
+  "gamerule.003enableNoAnimals": "灭绝：牛、羊、猪、鸡四种动物不再生成",
+  "gamerule.004enableMoreRainWeather": "雨季：一段时间后大幅提高世界下雨的时长",
+  "gamerule.005disableCropGrow": "荒疫：农作物不再自然生长",
+  "gamerule.006enableUniversalAggro": "众矢之的：玩家会无条件引起猪人和末影人的仇恨",
+  "gamerule.007enableAnvilLevel": "启用铁砧等级",
+  "gamerule.008enableAdvancedEnchantingTable": "启用高级附魔台",
+
+
+
+
+
+
+
+
   "generator.miteequilibrium.classic_overworld": "默认（经典）",
   "effect.miteequilibrium.insulin_resistance": "糖尿病"
 }

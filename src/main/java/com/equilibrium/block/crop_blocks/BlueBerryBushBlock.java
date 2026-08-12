@@ -1,8 +1,13 @@
 package com.equilibrium.block.crop_blocks;
 
+import com.equilibrium.DamageSourceRegister;
+import com.equilibrium.block.miscellaneous.MiscellaneousBlocks;
 import com.equilibrium.item.food.FoodItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -11,6 +16,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -81,11 +88,18 @@ public class BlueBerryBushBlock extends BushBlock implements BonemealableBlock {
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity instanceof LivingEntity && entity.getType() != EntityType.FOX && entity.getType() != EntityType.BEE) {
             entity.makeStuckInBlock(state, new Vec3(0.8F, 0.75, 0.8F));
-            if (!level.isClientSide && state.getValue(AGE) > 0 && (entity.xOld != entity.getX() || entity.zOld != entity.getZ())) {
+            if (!level.isClientSide && state.getValue(AGE) >= 0 && (entity.xOld != entity.getX() || entity.zOld != entity.getZ())) {
                 double d0 = Math.abs(entity.getX() - entity.xOld);
                 double d1 = Math.abs(entity.getZ() - entity.zOld);
                 if (d0 >= 0.003F || d1 >= 0.003F) {
-                    //这里暂时使用甜浆果的伤害戳刺类型
+
+                    Holder<DamageType> hurtByBlueBerry = entity.level().registryAccess()
+                            .registryOrThrow(Registries.DAMAGE_TYPE)
+                            .getHolder(DamageSourceRegister.HURT_BY_BLUE_BERRY)
+                            .orElseThrow(() -> new IllegalStateException("DamageType not registered"));
+
+
+                    entity.hurt(new DamageSource(hurtByBlueBerry), 1.0F);
                     entity.hurt(level.damageSources().sweetBerryBush(), 1.0F);
                 }
             }
@@ -97,7 +111,7 @@ public class BlueBerryBushBlock extends BushBlock implements BonemealableBlock {
             ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult
     ) {
         if(stack.is(Items.SHEARS)){
-            popResource(level, pos, new ItemStack(FoodItems.BLUEBERRY.get(), 1));
+            popResource(level, pos, new ItemStack(MiscellaneousBlocks.BLUEBERRY_BUSH.get(), 1));
             if(state.getValue(AGE)==1)
                 popResource(level, pos, new ItemStack(FoodItems.BLUEBERRY.get(), 1));
             stack.hurtAndBreak(30,player, EquipmentSlot.MAINHAND);
@@ -117,14 +131,12 @@ public class BlueBerryBushBlock extends BushBlock implements BonemealableBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         int i = state.getValue(AGE);
-        boolean flag = i == 3;
-        if (i > 1) {
-            int j = 1 + level.random.nextInt(2);
-            popResource(level, pos, new ItemStack(FoodItems.BLUEBERRY.get(), j + (flag ? 1 : 0)));
+        if (i > 0) {
+            popResource(level, pos, new ItemStack(FoodItems.BLUEBERRY.get(), 1));
             level.playSound(
                     null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F
             );
-            BlockState blockstate = state.setValue(AGE, Integer.valueOf(1));
+            BlockState blockstate = state.setValue(AGE, 0);
             level.setBlock(pos, blockstate, 2);
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, blockstate));
             return InteractionResult.sidedSuccess(level.isClientSide);
