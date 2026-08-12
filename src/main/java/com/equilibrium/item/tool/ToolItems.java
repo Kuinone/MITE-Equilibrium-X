@@ -9,6 +9,7 @@ import com.equilibrium.item.tool.metal.adamantium.AdamantiumHoe;
 import com.equilibrium.item.tool.metal.silver.SilverDagger;
 import com.equilibrium.item.tool.metal.silver.SilverHammer;
 import com.equilibrium.item.tool.metal.silver.SilverSword;
+import com.equilibrium.item.tool.wood.WoodenWeapon;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Tier;
@@ -23,7 +24,10 @@ import java.util.function.Supplier;
 public class ToolItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(OnServerInitialize.MOD_ID);
-
+    public static final Supplier<Item> WOODEN_CUDGEL =
+            ITEMS.register("wooden_cudgel", () -> createWoodenWeaponItem(ToolTiers.WOODEN_CUDGEL, 1, 1f));
+    public static final Supplier<Item> WOODEN_CLUB =
+            ITEMS.register("wooden_club", () -> createWoodenWeaponItem(ToolTiers.WOODEN_CLUB, 2, 1f));
     // ----- 燧石工具 -----
     public static final Supplier<Item> FLINT_HATCHET =
             ITEMS.register("flint_hatchet", () -> createFlintAxeOrHatchetItem(ToolTiers.FLINT_HATCHET, 4, 1f));
@@ -135,6 +139,10 @@ public class ToolItems {
     // ----- 工厂方法（与原来完全一致）-----
     public static Item createFlintShovelItem(Tier material, int finalDamage, float finalDamageSpeed) {
         return new FlintShovel(material, new Item.Properties()
+                .attributes(DiggerItem.createAttributes(material, -1 + finalDamage, -4 + finalDamageSpeed)));
+    }
+    public static Item createWoodenWeaponItem(Tier material, int finalDamage, float finalDamageSpeed) {
+        return new WoodenWeapon(material, new Item.Properties()
                 .attributes(DiggerItem.createAttributes(material, -1 + finalDamage, -4 + finalDamageSpeed)));
     }
 

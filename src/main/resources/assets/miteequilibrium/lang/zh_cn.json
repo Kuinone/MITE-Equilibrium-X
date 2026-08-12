@@ -1,8 +1,5 @@
 {
-
   "death.attack.hurt_by_blue_berry": "%1$s 被蓝莓丛刺死了",
-
-
   "book.miteequilibrium.equilibrium_guide.name": "指引 & 额外补充内容",
   "book.miteequilibrium.equilibrium_guide.landing_text": "从近五万个字符的更新日志中浓缩选取的内容，旨在快速帮助玩家入门。",
   "adventure.brew_potion.title": "女巫科技",
@@ -35,50 +32,29 @@
   "adventure.kill_dragon.title": "结束了。",
   "adventure.root.title": "MITE-宁静",
   "adventure.use_ender_eye.title": "要塞追寻者",
-
-
-
-
-
-
-
-
-
   "next_respawn": "距离下次可用的重生还有: ",
   "mod_death_text": "不必冒险，你有无限次重来的机会，这个世界永远等待着你",
   "mod.first_day.helloWorld": "在你的附近寻找箱子,取出其中的物品",
   "container.xp.requirement": "经验需求: %s",
   "container.xp.cost": "经验花费: %s",
-
   "difficulty.extra.entry.message": "共 %s 条进阶词条，已开启 %s 条",
   "difficulty.basic.entry.message": "共 %s 条基础词条，已开启 %s 条",
   "difficulty.extra.entry.message2": "已开启 %s 条进阶词条",
-
-
   "miteequilibrium.tooltip.quality.average": "品质：普通",
   "miteequilibrium.tooltip.quality.excellent": "品质：优秀",
   "miteequilibrium.tooltip.quality.refined": "品质：精良",
   "miteequilibrium.tooltip.quality.epic": "品质：史诗",
   "miteequilibrium.tooltip.quality.master": "品质：大师",
   "miteequilibrium.tooltip.durability_bonus": "+%s%% 耐久",
-
-
   "miteequilibrium.message.days_clear": "通关天数：%s",
   "miteequilibrium.message.world_seed": "世界种子：%s",
   "miteequilibrium.message.grand_stage_clear": "全词条通关：%s",
   "miteequilibrium.message.version_info": "版本信息号：%s",
-
   "miteequilibrium.message.invalid_clear_seed_mismatch": "无效的通关信息，因为在记录的通关信息中，世界种子与当前世界不符",
   "miteequilibrium.message.invalid_clear_info": "无效的通关信息",
   "miteequilibrium.message.no_clear_info": "未获取到通关信息",
-
   "miteequilibrium.message.boolean.true": "是",
   "miteequilibrium.message.boolean.false": "否",
-
-
-
-
-
   "item.miteequilibrium.sinew": "皮革线",
   "item.miteequilibrium.beef_soup": "牛肉汤",
   "item.miteequilibrium.chocolate": "巧克力",
@@ -86,9 +62,7 @@
   "item.miteequilibrium.onion": "洋葱",
   "item.miteequilibrium.manure": "肥料",
   "item.miteequilibrium.blueberry": "蓝莓",
-
   "block.miteequilibrium.blueberry_bush": "蓝莓丛",
-
   "item.miteequilibrium.bowl_water": "水碗",
   "item.miteequilibrium.bowl_milk": "牛奶碗",
   "block.miteequilibrium.emerald_enchanting_table": "绿宝石附魔台",
@@ -189,6 +163,8 @@
   "item.miteequilibrium.adamantium_sword": "艾德曼剑",
   "item.miteequilibrium.ancient_metal": "远古金属锭",
   "item.miteequilibrium.ancient_metal_nugget": "远古金属粒",
+  "item.miteequilibrium.wooden_club": "木棒",
+  "item.miteequilibrium.wooden_cudgel": "短木棒",
   "item.miteequilibrium.copper": "精铜锭",
   "item.miteequilibrium.copper_axe": "铜斧",
   "item.miteequilibrium.copper_boots": "铜靴",
@@ -306,7 +282,6 @@
   "gamerule.06enablePhytonutrient": "启用营养不良机制",
   "gamerule.07enableBloodMoonThunder": "启用血月雷电",
   "gamerule.08disablePlayerTeleport": "禁用玩家间的传送指令：/teleportToPlayer",
-
   "gamerule.001disableVillageAndPillage": "荒芜：移除了村庄、附属的农田和掠夺者前哨站结构",
   "gamerule.002enableMoreSlDamage": "三思而后行：SL行为会损失更多生命值",
   "gamerule.003enableNoAnimals": "灭绝：牛、羊、猪、鸡四种动物不再生成",
@@ -315,14 +290,6 @@
   "gamerule.006enableUniversalAggro": "众矢之的：玩家会无条件引起猪人和末影人的仇恨",
   "gamerule.007enableAnvilLevel": "启用铁砧等级",
   "gamerule.008enableAdvancedEnchantingTable": "启用高级附魔台",
-
-
-
-
-
-
-
-
-  "generator.miteequilibrium.classic_overworld": "默认（经典）",
-  "effect.miteequilibrium.insulin_resistance": "糖尿病"
+  "effect.miteequilibrium.insulin_resistance": "糖尿病",
+  "generator.miteequilibrium.classic_overworld": "默认（经典）"
 }

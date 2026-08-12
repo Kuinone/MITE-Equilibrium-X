@@ -8,6 +8,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.function.Supplier;
 
@@ -52,6 +53,11 @@ public enum ToolTiers implements Tier {
     MITHRIL_HAMMER(BlockTags.AIR, 179200, 0.5F, 0.0F, 25, () -> Ingredient.of(MaterialItems.MITHRIL_NUGGET)),
     ADAMANTIUM_HAMMER(BlockTags.AIR, 179200, 1.0F, 0.0F, 18, () -> Ingredient.of(MaterialItems.ADAMANTIUM_NUGGET)),
 
+    /**
+     * TODO: 木棒耐久度
+     */
+    WOODEN_CUDGEL(BlockTags.AIR, 800, 0.5F, 0, 0, () -> Ingredient.of(Items.OAK_PLANKS)),
+    WOODEN_CLUB(BlockTags.AIR, 1600, 0.5F, 0, 0, () -> Ingredient.of(Items.OAK_PLANKS)),
     COPPER_SWORD(BlockTags.AIR, 3200, 1.0F, 0.0F, 15, () -> Ingredient.of(MaterialItems.COPPER_NUGGET)),
     SILVER_SWORD(BlockTags.AIR, 3200, 1.0F, 0.0F, 15, () -> Ingredient.of(MaterialItems.SILVER_NUGGET)),
     GOLD_SWORD(BlockTags.AIR, 3200, 2.0F, 0.0F, 25, () -> Ingredient.of(Items.GOLD_NUGGET)),

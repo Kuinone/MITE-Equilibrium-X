@@ -100,6 +100,9 @@ public class ModItemGroups {
                     .title(Component.translatable("mod.itemGroup.armors_and_tools"))
                     .icon(() -> new ItemStack(ToolItems.ADAMANTIUM_PICKAXE.get()))   // 若 Tools 已改为 DeferredItem 则需 .get()
                     .displayItems((params, output) -> {
+                        output.accept(ToolItems.WOODEN_CUDGEL.get());
+                        output.accept(ToolItems.WOODEN_CLUB.get());
+
                         output.accept(ToolItems.FLINT_AXE.get());
                         output.accept(ToolItems.FLINT_HATCHET.get());
                         output.accept(ToolItems.FLINT_KNIFE.get());
