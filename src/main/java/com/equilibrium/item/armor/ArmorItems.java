@@ -29,6 +29,23 @@ public class ArmorItems {
             () -> new ArmorItem(ArmorMaterials.COPPER, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(4 * 32)));
 
+    // 铜质护甲
+    public static final DeferredItem<ArmorItem> COPPER_CHAINMAIL_HELMET = ITEMS.register("copper_chainmail_helmet",
+            () -> new ArmorItem(ArmorMaterials.COPPER, ArmorItem.Type.HELMET,
+                    new Item.Properties().durability(6 * 32)));
+
+    public static final DeferredItem<ArmorItem> COPPER_CHAINMAIL_CHEST_PLATE = ITEMS.register("copper_chainmail_chest_plate",
+            () -> new ArmorItem(ArmorMaterials.COPPER, ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().durability(12 * 32)));
+
+    public static final DeferredItem<ArmorItem> COPPER_CHAINMAIL_LEGGINGS = ITEMS.register("copper_chainmail_leggings",
+            () -> new ArmorItem(ArmorMaterials.COPPER, ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().durability(8 * 32)));
+
+    public static final DeferredItem<ArmorItem> COPPER_CHAINMAIL_BOOTS = ITEMS.register("copper_chainmail_boots",
+            () -> new ArmorItem(ArmorMaterials.COPPER, ArmorItem.Type.BOOTS,
+                    new Item.Properties().durability(4 * 32)));
+
     // 秘银护甲
     public static final DeferredItem<ArmorItem> MITHRIL_HELMET = ITEMS.register("mithril_helmet",
             () -> new ArmorItem(ArmorMaterials.MITHRIL, ArmorItem.Type.HELMET,
@@ -48,18 +65,18 @@ public class ArmorItems {
 
     // 远古金属链甲
     public static final DeferredItem<ArmorItem> ANCIENT_METAL_CHAINMAIL_HELMET = ITEMS.register("ancient_metal_chainmail_helmet",
-            () -> new ArmorItem(ArmorMaterials.ANCIENT_METAL_CHAINMAIL, ArmorItem.Type.HELMET,
+            () -> new ArmorItem(ArmorMaterials.ANCIENT_METAL_CHAIN, ArmorItem.Type.HELMET,
                     new Item.Properties().durability(5 * 32)));
 
     public static final DeferredItem<ArmorItem> ANCIENT_METAL_CHAINMAIL_CHEST_PLATE = ITEMS.register("ancient_metal_chainmail_chest_plate",
-            () -> new ArmorItem(ArmorMaterials.ANCIENT_METAL_CHAINMAIL, ArmorItem.Type.CHESTPLATE,
+            () -> new ArmorItem(ArmorMaterials.ANCIENT_METAL_CHAIN, ArmorItem.Type.CHESTPLATE,
                     new Item.Properties().durability(8 * 32)));
 
     public static final DeferredItem<ArmorItem> ANCIENT_METAL_CHAINMAIL_LEGGINGS = ITEMS.register("ancient_metal_chainmail_leggings",
-            () -> new ArmorItem(ArmorMaterials.ANCIENT_METAL_CHAINMAIL, ArmorItem.Type.LEGGINGS,
+            () -> new ArmorItem(ArmorMaterials.ANCIENT_METAL_CHAIN, ArmorItem.Type.LEGGINGS,
                     new Item.Properties().durability(7 * 32)));
 
     public static final DeferredItem<ArmorItem> ANCIENT_METAL_CHAINMAIL_BOOTS = ITEMS.register("ancient_metal_chainmail_boots",
-            () -> new ArmorItem(ArmorMaterials.ANCIENT_METAL_CHAINMAIL, ArmorItem.Type.BOOTS,
+            () -> new ArmorItem(ArmorMaterials.ANCIENT_METAL_CHAIN, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(4 * 32)));
 }
