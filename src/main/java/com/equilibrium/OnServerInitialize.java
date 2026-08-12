@@ -349,7 +349,7 @@ public class OnServerInitialize {
     private static class CustomWorldVersion implements WorldVersion {
         @Override
         public @NotNull DataVersion getDataVersion() {
-            return new DataVersion(110111, "MITE:Equilibrium-NeoForge-1.7X-Alpha");
+            return new DataVersion(110111, "MITE:Equilibrium-NeoForge-Beta");
         }
 
         @Override
@@ -359,7 +359,7 @@ public class OnServerInitialize {
 
         @Override
         public @NotNull String getName() {
-            return "MITE:Equilibrium NeoForge 1.7X Alpha";
+            return "MITE:Equilibrium Beta v1.1.0_7";
         }
 
         @Override
