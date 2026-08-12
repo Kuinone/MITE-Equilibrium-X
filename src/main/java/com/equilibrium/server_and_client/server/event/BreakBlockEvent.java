@@ -16,27 +16,29 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-import static com.equilibrium.OnServerInitialize.MOD_ID;
 import static com.equilibrium.block.reference.BlocksHardnessList.BLOCKS_HARDNESS_HASHMAP;
 import static com.equilibrium.block.reference.BlocksHardnessList.getStandardBlockName;
 
-@EventBusSubscriber(modid = MOD_ID)
+// 移除 @EventBusSubscriber，改为手动注册实例
 public class BreakBlockEvent {
 
-    private static final BlockToItemConverter blockToItemConverter = new BlockToItemConverter();
+    private final BlockToItemConverter blockToItemConverter;  // 改为实例字段
     private static int guarantee = 0;
 
+    public BreakBlockEvent() {
+        // 在构造函数中初始化，此时注册表已完全绑定
+        this.blockToItemConverter = new BlockToItemConverter();
+    }
+
+    // 移除 static，改为实例方法
     @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+    public void onBlockBreak(BlockEvent.BreakEvent event) {
         Player player = event.getPlayer();
         if (player.isCreative()) return;
 
@@ -86,7 +88,6 @@ public class BreakBlockEvent {
                 return;
             }
 
-            // 是否掉落自身（受时运影响且共享保底）
             int gravelDropChance = 75 - fortuneLevel * 15;
             if (random.nextInt(100) < gravelDropChance && guarantee < 12) {
                 guarantee++;
@@ -99,7 +100,6 @@ public class BreakBlockEvent {
                 guarantee = 0;
             }
 
-            // 额外掉落物
             int extra = random.nextInt(1000);
             ItemStack dropStack;
             if (extra == 0) {
@@ -133,14 +133,12 @@ public class BreakBlockEvent {
             int dropCount = 1;
             Item dropItem = blockToItemConverter.convertBlockToItem(state.getBlock());
 
-            // 特定矿物多次掉落
             if (dropItem == Items.LAPIS_LAZULI ||
                     dropItem == Items.REDSTONE ||
                     dropItem == Items.GOLD_NUGGET) {
                 dropCount = 4 + random.nextInt(4);
             }
 
-            // 时运触发翻倍
             if (random.nextInt(10) >= (10 - fortuneLevel)) {
                 dropCount *= 2;
             }

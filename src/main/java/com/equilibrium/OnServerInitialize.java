@@ -50,14 +50,11 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,16 +68,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static com.equilibrium.GlobalModConfig.initConfig;
-import static com.equilibrium.block.CraftingDifficultyHelper.initCraftingDifficulties;
 import static com.equilibrium.difficulty_entry.DifficultyEntryGetter.isAnyExtraEntryExisting;
 import static com.equilibrium.difficulty_entry.DifficultyEntryRegister.initGameRules;
 import static com.equilibrium.server_and_client.server.event.CropIllnessEvent.updateCropBlockPos;
 import static com.equilibrium.server_and_client.server.moonphase_tasks.MoonPhaseEvent.moonPhaseEvent;
-import static com.equilibrium.structure.ModPlacementGenerator.registerModOre;
-import static com.equilibrium.tags.ModBlockTags.registerModBlockTags;
-import static com.equilibrium.tags.ModEntityTags.registerModEntityTags;
-import static com.equilibrium.tags.ModItemTags.registerModItemTags;
 import static com.equilibrium.util.BooleanStorageUtil.loadWorldInformation;
 
 @Mod(OnServerInitialize.MOD_ID)
@@ -109,8 +100,8 @@ public class OnServerInitialize {
         // 注册所有 DeferredRegister
         registerDeferredRegisters(modEventBus);
 
-        // 注册结构 FEATURES 到模组事件总线
-        StructureRegister.FEATURES.register(modEventBus);
+        // 注册结构 FEATURES 到模组事件总线（已注释，防止重复注册）
+        // StructureRegister.FEATURES.register(modEventBus);
 
         // 注册熔炉实体
         FurnaceEntityRegistry.BLOCK_ENTITY_TYPES.register(modEventBus);
@@ -118,10 +109,13 @@ public class OnServerInitialize {
         // 注册自定义世界版本
         SharedConstants.CURRENT_VERSION = new CustomWorldVersion();
 
-        // 订阅 NeoForge 事件bus
-        NeoForge.EVENT_BUS.register(this);
+        // 注册模组生命周期事件（FMLCommonSetupEvent 属于模组总线）
+        modEventBus.addListener(this::onCommonSetup);
 
-        // 启动定时清理任务
+        // 注意：游戏事件监听器（NeoForge.EVENT_BUS）的注册已移至 onCommonSetup 中，
+        // 以确保注册表完全加载后再绑定，避免 DeferredHolder 过早访问。
+
+        // 启动定时清理任务（不影响注册表）
         scheduler.scheduleAtFixedRate(() -> {
             synchronized (BreakBlockGoal.blockBreakProgressMap) {
                 BreakBlockGoal.blockBreakProgressMap.clear();
@@ -129,7 +123,7 @@ public class OnServerInitialize {
             }
         }, 240, 240, TimeUnit.SECONDS);
 
-        // 初始化经验映射
+        // 初始化经验映射（静态操作，安全）
         initXpMap();
     }
 
@@ -167,13 +161,17 @@ public class OnServerInitialize {
 
         // 状态效果
         RegisterStatusEffect.MOB_EFFECTS.register(modEventBus);
+
+
+        StructureRegister.FEATURES.register(modEventBus);
+
     }
 
     // 原 onServerAboutToStart 改为监听 ServerStartingEvent（或 ServerStartedEvent）
+    @Deprecated
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         // 注册结构到生物群系
-        StructureRegister.addFeatureToBiomes();
     }
 
     @SubscribeEvent
@@ -228,7 +226,6 @@ public class OnServerInitialize {
                 },
                 ConcurrentHashMap::new
         );
-
     }
 
     // 服务器 Tick 事件
@@ -316,12 +313,13 @@ public class OnServerInitialize {
     public void onItemUse(PlayerInteractEvent.RightClickItem event) {
         OnItemUseEvent.onUseItem(event.getEntity(), event.getLevel(), event.getHand());
     }
+
     @SubscribeEvent
     public void onBlockUse(PlayerInteractEvent.RightClickBlock event) {
         UseBlockActionUtil.canUseVanillaCraftingTable(event.getEntity(), event.getLevel(), event.getHitVec());
     }
 
-    @SubscribeEvent
+    // 模组生命周期事件：此时所有 DeferredRegister 已绑定
     public void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             CraftingDifficultyHelper.initCraftingDifficulties();
@@ -330,9 +328,14 @@ public class OnServerInitialize {
             ModItemTags.registerModItemTags();
             GlobalModConfig.initConfig();
             initXpMap();
-
-            // FoodComponentModifier.foodComponentModify();
         });
+
+        // 注册表已完全加载，此时安全创建并注册事件监听器
+        NeoForge.EVENT_BUS.register(new CraftingMetalPickAxeListener());
+        NeoForge.EVENT_BUS.register(this);
+
+        // 手动注册 BreakBlockEvent（现在其静态初始化已安全）
+        NeoForge.EVENT_BUS.register(new BreakBlockEvent());
     }
 
     public static void initXpMap() {

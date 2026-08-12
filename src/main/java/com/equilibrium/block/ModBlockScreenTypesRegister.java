@@ -2,6 +2,7 @@ package com.equilibrium.block;
 
 import com.equilibrium.OnServerInitialize;
 import com.equilibrium.block.anvil.adamantium_anvil_block.AdamantiumAnvilScreenHandler;
+import com.equilibrium.block.anvil.copper_anvil_block.CopperAnvilScreenHandler;
 import com.equilibrium.block.anvil.iron_anvil_block.IronAnvilScreenHandler;
 import com.equilibrium.block.anvil.mithril_anvil_block.MithrilAnvilScreenHandler;
 import com.equilibrium.block.enchanting_table.ModEnchantmentScreenHandler;
@@ -20,6 +21,7 @@ public class ModBlockScreenTypesRegister {
     // 保留字段声明，但不初始化
     public static MenuType<ModEnchantmentScreenHandler> EMERALD_ENCHANTING_TABLE;
     public static MenuType<ModEnchantmentScreenHandler> DIAMOND_ENCHANTING_TABLE;
+    public static MenuType<CopperAnvilScreenHandler> COPPER_ANVIL_SCREEN_TYPE;
     public static MenuType<IronAnvilScreenHandler> IRON_ANVIL_SCREEN_TYPE;
     public static MenuType<MithrilAnvilScreenHandler> MITHRIL_ANVIL_SCREEN_TYPE;
     public static MenuType<AdamantiumAnvilScreenHandler> ADAMANTIUM_ANVIL_SCREEN_TYPE;

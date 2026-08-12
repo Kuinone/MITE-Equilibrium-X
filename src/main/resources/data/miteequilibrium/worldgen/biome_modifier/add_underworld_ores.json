@@ -1,0 +1,18 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#miteequilibrium:is_underworld",
+  "features": [
+    "miteequilibrium:ore_custom_underworld",
+    "miteequilibrium:adamantium_ore_underworld",
+    "miteequilibrium:adamantium_ore_deep_underworld",
+    "miteequilibrium:copper_ore_underworld",
+    "miteequilibrium:iron_ore_underworld",
+    "miteequilibrium:silver_ore_underworld",
+    "miteequilibrium:mithril_ore_underworld",
+    "miteequilibrium:gold_ore_underworld",
+    "miteequilibrium:diamond_ore_underworld",
+    "miteequilibrium:lapis_ore_underworld",
+    "miteequilibrium:redstone_ore_underworld"
+  ],
+  "step": "underground_ores"
+}

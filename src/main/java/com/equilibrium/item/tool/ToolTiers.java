@@ -66,6 +66,8 @@ public enum ToolTiers implements Tier {
     MITHRIL_HOE(BlockTags.AIR, 51200, 2.0F, 0.0F, 25, () -> Ingredient.of(MaterialItems.MITHRIL_NUGGET)),
     ADAMANTIUM_HOE(BlockTags.AIR, 204800, 4.0F, 0.0F, 18, () -> Ingredient.of(MaterialItems.ADAMANTIUM_NUGGET));
 
+
+
     private final TagKey<Block> inverseTag;
     private final int itemDurability;
     private final float miningSpeed;

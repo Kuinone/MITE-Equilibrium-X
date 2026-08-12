@@ -15,7 +15,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
@@ -27,31 +26,25 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.Random;
-
 import static net.minecraft.world.item.Items.BONE_MEAL;
 
 public class BlueberryBushBlock extends CropBlock {
-    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 1);
+    // 删除自定义 AGE，直接继承父类的 AGE（范围 0~7）
     private static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 12.0, 14.0);
 
     public BlueberryBushBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState().setValue(AGE, 0));
+        // 父类已默认 AGE=0，无需额外设置
+        // 注意：父类默认状态已包含 AGE，且值为 0，所以此处不重复调用 registerDefaultState
     }
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(AGE);
-    }
+    // 不重写 createBlockStateDefinition，父类已添加 AGE
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -62,6 +55,7 @@ public class BlueberryBushBlock extends CropBlock {
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
+
     @Override
     public boolean isRandomlyTicking(BlockState state) {
         return true;
@@ -69,12 +63,14 @@ public class BlueberryBushBlock extends CropBlock {
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        // 使用父类的 AGE
         if (state.getValue(AGE) == 0 && level.getRawBrightness(pos, 0) >= 9) {
-            if (random.nextFloat() < 1f/16) {
+            if (random.nextFloat() < 1f / 16) {
                 level.setBlock(pos, state.setValue(AGE, 1), 3);
             }
         }
     }
+
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity instanceof LivingEntity && entity.getType() != EntityType.FOX && entity.getType() != EntityType.BEE) {
@@ -91,7 +87,8 @@ public class BlueberryBushBlock extends CropBlock {
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack heldStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public ItemInteractionResult useItemOn(ItemStack heldStack, BlockState state, Level level, BlockPos pos,
+                                           Player player, InteractionHand hand, BlockHitResult hit) {
         if (heldStack.getItem() == Items.SHEARS) {
             if (!level.isClientSide) {
                 ItemStack bushStack = new ItemStack(MiscellaneousBlocks.BLUEBERRY_BUSH_ITEM.get());
@@ -103,7 +100,8 @@ public class BlueberryBushBlock extends CropBlock {
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
 
-        if (state.getValue(AGE)==0 && heldStack.getItem() == BONE_MEAL) {
+        // 使用父类 AGE
+        if (state.getValue(AGE) == 0 && heldStack.getItem() == BONE_MEAL) {
             heldStack.consume(1, player);
             if (level.random.nextFloat() < 0.125f) {
                 level.setBlock(pos, state.setValue(AGE, 1), 3);
@@ -114,6 +112,8 @@ public class BlueberryBushBlock extends CropBlock {
         if (state.getValue(AGE) == 1) {
             if (!level.isClientSide) {
                 Block.popResource(level, pos, new ItemStack(FoodItems.BLUEBERRY.get()));
+                // 收获后降回 0 还是保持 1？原代码是保持 1，但这样会持续产出，可能设计为保持 1 以便再次收获。
+                // 但原代码是 level.setBlock(pos, state.setValue(AGE, 1), 3); 即保持1，我们不变。
                 level.setBlock(pos, state.setValue(AGE, 1), 3);
             }
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
@@ -127,11 +127,10 @@ public class BlueberryBushBlock extends CropBlock {
         if (state.getValue(AGE) == 1) {
             if (!level.isClientSide) {
                 Block.popResource(level, pos, new ItemStack(FoodItems.BLUEBERRY.get()));
-                level.setBlock(pos, state.setValue(AGE, 1), 3);
+                level.setBlock(pos, state.setValue(AGE, 1), 3); // 保持1
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
-
         return InteractionResult.PASS;
     }
 

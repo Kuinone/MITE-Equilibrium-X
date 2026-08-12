@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#miteequilibrium:is_underworld",
+  "features": "miteequilibrium:monster_room",
+  "step": "underground_structures"
+}

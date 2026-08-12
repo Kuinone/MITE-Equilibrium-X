@@ -1,9 +1,10 @@
 package com.equilibrium;
 
 import com.equilibrium.block.ModBlockScreenTypesRegister;
+import com.equilibrium.block.anvil.iron_anvil_block.IronAnvilScreen;
 import com.equilibrium.block.miscellaneous.MiscellaneousBlocks;
 import com.equilibrium.block.anvil.adamantium_anvil_block.AdamantiumAnvilScreen;
-import com.equilibrium.block.anvil.iron_anvil_block.IronAnvilScreen;
+import com.equilibrium.block.anvil.copper_anvil_block.CopperAnvilScreen;
 import com.equilibrium.block.anvil.mithril_anvil_block.MithrilAnvilScreen;
 import com.equilibrium.block.enchanting_table.ModBlockEntityTypes;
 import com.equilibrium.block.enchanting_table.ModEnchantmentScreen;
@@ -63,6 +64,7 @@ public class OnClientInitialize {
             // 绑定菜单与屏幕
             MenuScreens.register(ModBlockScreenTypesRegister.EMERALD_ENCHANTING_TABLE, ModEnchantmentScreen::new);
             MenuScreens.register(ModBlockScreenTypesRegister.DIAMOND_ENCHANTING_TABLE, ModEnchantmentScreen::new);
+            MenuScreens.register(ModBlockScreenTypesRegister.COPPER_ANVIL_SCREEN_TYPE, CopperAnvilScreen::new);
             MenuScreens.register(ModBlockScreenTypesRegister.IRON_ANVIL_SCREEN_TYPE, IronAnvilScreen::new);
             MenuScreens.register(ModBlockScreenTypesRegister.MITHRIL_ANVIL_SCREEN_TYPE, MithrilAnvilScreen::new);
             MenuScreens.register(ModBlockScreenTypesRegister.ADAMANTIUM_ANVIL_SCREEN_TYPE, AdamantiumAnvilScreen::new);

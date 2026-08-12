@@ -1,6 +1,6 @@
 package com.equilibrium.item.tool.metal;
 
-import com.equilibrium.server_and_client.server.event.CraftingMetalPickAxeCallback;
+import com.equilibrium.server_and_client.server.event.CraftingMetalPickAxeEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.List;
 
@@ -85,15 +86,16 @@ public class MetalSword extends TieredItem implements AdditionalAttribute {
 
     @Override
     public void onCraftedBy(ItemStack stack, Level world, Player player) {
-        InteractionResult result = CraftingMetalPickAxeCallback.EVENT.invoker().interact(world,player);
-        if(!player.level().isClientSide())
-            player.giveExperiencePoints(-xpCost(this.getTier(),getDurabilityLevel(stack)));
-//        if(getDurabilityLevel()==1)
-//        player.sendMessage(Text.of("This DurabilityLevel is :"+getDurabilityLevel(stack)));
+        CraftingMetalPickAxeEvent event = new CraftingMetalPickAxeEvent(world, player);
+        NeoForge.EVENT_BUS.post(event);
+        InteractionResult result = event.getResult();
 
-        if(result == InteractionResult.FAIL) {
-            return;
+        if (!player.level().isClientSide()) {
+            player.giveExperiencePoints(-xpCost(this.getTier(), getDurabilityLevel(stack)));
         }
 
+        if (result == InteractionResult.FAIL) {
+            return;
+        }
     }
 }

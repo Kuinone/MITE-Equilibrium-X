@@ -1,6 +1,7 @@
 package com.equilibrium.block.anvil;
 
 import com.equilibrium.block.anvil.adamantium_anvil_block.AdamantiumAnvilBlock;
+import com.equilibrium.block.anvil.copper_anvil_block.CopperAnvilBlock;
 import com.equilibrium.block.anvil.iron_anvil_block.IronAnvilBlock;
 import com.equilibrium.block.anvil.mithril_anvil_block.MithrilAnvilBlock;
 import net.minecraft.world.item.BlockItem;
@@ -19,6 +20,12 @@ public class AnvilBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MOD_ID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
 
+    public static final DeferredBlock<CopperAnvilBlock> COPPER_ANVIL = BLOCKS.register("copper_anvil",
+            () -> new CopperAnvilBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(0.2F, 1200.0F)
+                    .sound(SoundType.ANVIL).pushReaction(PushReaction.BLOCK)));
+
+
     public static final DeferredBlock<IronAnvilBlock> IRON_ANVIL = BLOCKS.register("iron_anvil",
             () -> new IronAnvilBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(0.2F, 1200.0F)
@@ -33,6 +40,9 @@ public class AnvilBlocks {
             () -> new AdamantiumAnvilBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(0.2F, 1200.0F)
                     .sound(SoundType.ANVIL).pushReaction(PushReaction.BLOCK)));
+
+    public static final DeferredItem<BlockItem> COPPER_ANVIL_ITEM = ITEMS.register("copper_anvil",
+            () -> new BlockItem(COPPER_ANVIL.get(), new Item.Properties().stacksTo(16)));
 
     public static final DeferredItem<BlockItem> IRON_ANVIL_ITEM = ITEMS.register("iron_anvil",
             () -> new BlockItem(IRON_ANVIL.get(), new Item.Properties().stacksTo(16)));

@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#c:is_nether",
+  "features": "miteequilibrium:ore_custom_nether",
+  "step": "underground_ores"
+}

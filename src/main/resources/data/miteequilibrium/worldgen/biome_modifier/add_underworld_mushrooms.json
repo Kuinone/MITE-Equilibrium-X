@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#miteequilibrium:is_underworld",
+  "features": [
+    "miteequilibrium:mushroom_island_vegetation",
+    "miteequilibrium:brown_mushroom_normal"
+  ],
+  "step": "surface_structures"
+}
