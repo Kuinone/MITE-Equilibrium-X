@@ -1,0 +1,6 @@
+{
+  "parent": "miteequilibrium:block/template_copper_anvil",
+  "textures": {
+    "top": "miteequilibrium:block/copper/top_damaged_0"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "variants": {
+    "facing=east,copper_anvil_stage=0": {
+      "model": "miteequilibrium:block/copper_anvil",
+      "y": 270
+    },
+    "facing=east,copper_anvil_stage=1": {
+      "model": "miteequilibrium:block/chipped_copper_anvil",
+      "y": 270
+    },
+    "facing=east,copper_anvil_stage=2": {
+      "model": "miteequilibrium:block/damaged_copper_anvil",
+      "y": 270
+    },
+
+
+    "facing=north,copper_anvil_stage=0": {
+      "model": "miteequilibrium:block/copper_anvil",
+      "y": 180
+    },
+    "facing=north,copper_anvil_stage=1": {
+      "model": "miteequilibrium:block/chipped_copper_anvil",
+      "y": 180
+    },
+    "facing=north,copper_anvil_stage=2": {
+      "model":  "miteequilibrium:block/damaged_copper_anvil",
+      "y": 180
+    },
+
+    "facing=south,copper_anvil_stage=0": {
+      "model": "miteequilibrium:block/copper_anvil"
+    },
+    "facing=south,copper_anvil_stage=1": {
+      "model": "miteequilibrium:block/chipped_copper_anvil"
+    },
+    "facing=south,copper_anvil_stage=2": {
+      "model": "miteequilibrium:block/damaged_copper_anvil"
+    },
+
+
+    "facing=west,copper_anvil_stage=0": {
+      "model": "miteequilibrium:block/copper_anvil",
+      "y": 90
+    },
+    "facing=west,copper_anvil_stage=1": {
+      "model": "miteequilibrium:block/chipped_copper_anvil",
+      "y": 90
+    },
+    "facing=west,copper_anvil_stage=2": {
+      "model": "miteequilibrium:block/damaged_copper_anvil",
+      "y": 90
+    }
+  }
+}
