@@ -22,7 +22,7 @@ public class ArmorMaterials {
     // ---- 普通盔甲 ----
     public static final Holder<ArmorMaterial> COPPER = register(
             "copper",
-            mapOf(2, 6, 5, 2),  // 顺序：头盔, 胸甲, 护腿, 靴子
+            mapOf(3, 5, 4, 2),  // 顺序：头盔, 胸甲, 护腿, 靴子
             16,
             SoundEvents.ARMOR_EQUIP_CHAIN,
             0.0f, 0.0f,
@@ -31,7 +31,7 @@ public class ArmorMaterials {
 
     public static final Holder<ArmorMaterial> SILVER = register(
             "silver",
-            mapOf(2, 6, 5, 2),
+            mapOf(3, 5, 4, 2),
             16,
             SoundEvents.ARMOR_EQUIP_CHAIN,
             0.0f, 0.0f,
@@ -40,7 +40,7 @@ public class ArmorMaterials {
 
     public static final Holder<ArmorMaterial> ANCIENT_METAL = register(
             "ancient_metal",
-            mapOf(3, 7, 6, 3),
+            mapOf(3, 5, 5, 3),
             16,
             SoundEvents.ARMOR_EQUIP_CHAIN,
             0.0f, 0.0f,
@@ -49,7 +49,7 @@ public class ArmorMaterials {
 
     public static final Holder<ArmorMaterial> MITHRIL = register(
             "mithril",
-            mapOf(3, 8, 6, 3),
+            mapOf(4, 6, 5, 3),
             24,
             SoundEvents.ARMOR_EQUIP_DIAMOND,
             2.0f, 0.0f,
@@ -58,7 +58,7 @@ public class ArmorMaterials {
 
     public static final Holder<ArmorMaterial> ADAMANTIUM = register(
             "adamantium",
-            mapOf(4, 9, 7, 4),
+            mapOf(4, 7, 6, 3),
             24,
             SoundEvents.ARMOR_EQUIP_DIAMOND,
             3.0f, 0.0f,
@@ -68,7 +68,7 @@ public class ArmorMaterials {
     // ---- 链甲（轻量化） ----
     public static final Holder<ArmorMaterial> COPPER_CHAIN = register(
             "copper_chain",
-            mapOf(1, 4, 3, 1),
+            mapOf(2, 3, 3, 2),
             16,
             SoundEvents.ARMOR_EQUIP_CHAIN,
             0.0f, 0.0f,
@@ -77,7 +77,7 @@ public class ArmorMaterials {
 
     public static final Holder<ArmorMaterial> SILVER_CHAIN = register(
             "silver_chain",
-            mapOf(1, 4, 3, 1),
+            mapOf(2, 3, 3, 2),
             16,
             SoundEvents.ARMOR_EQUIP_CHAIN,
             0.0f, 0.0f,
@@ -86,7 +86,7 @@ public class ArmorMaterials {
 
     public static final Holder<ArmorMaterial> ANCIENT_METAL_CHAIN = register(
             "ancient_metal_chain",
-            mapOf(2, 5, 4, 2),
+            mapOf(3, 4, 4, 2),
             24,
             SoundEvents.ARMOR_EQUIP_CHAIN,
             0.0f, 0.0f,
@@ -95,7 +95,7 @@ public class ArmorMaterials {
 
     public static final Holder<ArmorMaterial> MITHRIL_CHAIN = register(
             "mithril_chain",
-            mapOf(3, 8, 6, 3),
+            mapOf(3, 5, 4, 2),
             24,
             SoundEvents.ARMOR_EQUIP_DIAMOND,
             2.0f, 0.0f,
@@ -104,7 +104,7 @@ public class ArmorMaterials {
 
     public static final Holder<ArmorMaterial> ADAMANTIUM_CHAIN = register(
             "adamantium_chain",
-            mapOf(6, 16, 12, 6),
+            mapOf(3, 5, 5, 3),
             24,
             SoundEvents.ARMOR_EQUIP_DIAMOND,
             3.0f, 0.0f,

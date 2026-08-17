@@ -97,8 +97,9 @@ public class ModItemGroups {
     public static final Supplier<CreativeModeTab> TOOLS = TABS.register("toolsgroup", () ->
             CreativeModeTab.builder()
                     .title(Component.translatable("mod.itemGroup.armors_and_tools"))
-                    .icon(() -> new ItemStack(ToolItems.ADAMANTIUM_PICKAXE.get()))   // 若 Tools 已改为 DeferredItem 则需 .get()
+                    .icon(() -> new ItemStack(ToolItems.ADAMANTIUM_PICKAXE.get()))
                     .displayItems((params, output) -> {
+                        // ----- 工具 -----
                         output.accept(ToolItems.FLINT_AXE.get());
                         output.accept(ToolItems.FLINT_HATCHET.get());
                         output.accept(ToolItems.FLINT_KNIFE.get());
@@ -152,21 +153,66 @@ public class ModItemGroups {
                         output.accept(ToolItems.ADMANTIUM_SWORD.get());
                         output.accept(ToolItems.ADAMANTIUM_PICKAXE.get());
 
-                        // Armors 为普通 Item 字段，无需 .get()
+                        // ----- 盔甲（按材料分组）-----
+                        // 铜
                         output.accept(ArmorItems.COPPER_HELMET.get());
                         output.accept(ArmorItems.COPPER_CHEST_PLATE.get());
                         output.accept(ArmorItems.COPPER_LEGGINGS.get());
                         output.accept(ArmorItems.COPPER_BOOTS.get());
 
+                        // 铜链甲
+                        output.accept(ArmorItems.COPPER_CHAINMAIL_HELMET.get());
+                        output.accept(ArmorItems.COPPER_CHAINMAIL_CHEST_PLATE.get());
+                        output.accept(ArmorItems.COPPER_CHAINMAIL_LEGGINGS.get());
+                        output.accept(ArmorItems.COPPER_CHAINMAIL_BOOTS.get());
+
+                        // 银
+                        output.accept(ArmorItems.SILVER_HELMET.get());
+                        output.accept(ArmorItems.SILVER_CHEST_PLATE.get());
+                        output.accept(ArmorItems.SILVER_LEGGINGS.get());
+                        output.accept(ArmorItems.SILVER_BOOTS.get());
+
+                        // 银链甲
+                        output.accept(ArmorItems.SILVER_CHAINMAIL_HELMET.get());
+                        output.accept(ArmorItems.SILVER_CHAINMAIL_CHEST_PLATE.get());
+                        output.accept(ArmorItems.SILVER_CHAINMAIL_LEGGINGS.get());
+                        output.accept(ArmorItems.SILVER_CHAINMAIL_BOOTS.get());
+
+                        // 秘银
                         output.accept(ArmorItems.MITHRIL_HELMET.get());
                         output.accept(ArmorItems.MITHRIL_CHEST_PLATE.get());
                         output.accept(ArmorItems.MITHRIL_LEGGINGS.get());
                         output.accept(ArmorItems.MITHRIL_BOOTS.get());
 
+                        // 秘银链甲
+                        output.accept(ArmorItems.MITHRIL_CHAINMAIL_HELMET.get());
+                        output.accept(ArmorItems.MITHRIL_CHAINMAIL_CHEST_PLATE.get());
+                        output.accept(ArmorItems.MITHRIL_CHAINMAIL_LEGGINGS.get());
+                        output.accept(ArmorItems.MITHRIL_CHAINMAIL_BOOTS.get());
+
+                        // 远古金属
+                        output.accept(ArmorItems.ANCIENT_METAL_HELMET.get());
+                        output.accept(ArmorItems.ANCIENT_METAL_CHEST_PLATE.get());
+                        output.accept(ArmorItems.ANCIENT_METAL_LEGGINGS.get());
+                        output.accept(ArmorItems.ANCIENT_METAL_BOOTS.get());
+
+                        // 远古金属链甲
                         output.accept(ArmorItems.ANCIENT_METAL_CHAINMAIL_HELMET.get());
                         output.accept(ArmorItems.ANCIENT_METAL_CHAINMAIL_CHEST_PLATE.get());
                         output.accept(ArmorItems.ANCIENT_METAL_CHAINMAIL_LEGGINGS.get());
                         output.accept(ArmorItems.ANCIENT_METAL_CHAINMAIL_BOOTS.get());
+
+                        // 精金
+                        output.accept(ArmorItems.ADAMANTIUM_HELMET.get());
+                        output.accept(ArmorItems.ADAMANTIUM_CHEST_PLATE.get());
+                        output.accept(ArmorItems.ADAMANTIUM_LEGGINGS.get());
+                        output.accept(ArmorItems.ADAMANTIUM_BOOTS.get());
+
+                        // 精金链甲
+                        output.accept(ArmorItems.ADAMANTIUM_CHAINMAIL_HELMET.get());
+                        output.accept(ArmorItems.ADAMANTIUM_CHAINMAIL_CHEST_PLATE.get());
+                        output.accept(ArmorItems.ADAMANTIUM_CHAINMAIL_LEGGINGS.get());
+                        output.accept(ArmorItems.ADAMANTIUM_CHAINMAIL_BOOTS.get());
                     })
                     .build()
     );

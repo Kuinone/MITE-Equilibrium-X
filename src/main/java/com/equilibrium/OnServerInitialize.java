@@ -12,6 +12,7 @@ import com.equilibrium.block.miscellaneous.MiscellaneousBlocks;
 import com.equilibrium.block.ore.OreBlocks;
 import com.equilibrium.entity.goal.BreakBlockGoal;
 import com.equilibrium.item.armor.ArmorItems;
+import com.equilibrium.item.armor.ArmorMaterials;
 import com.equilibrium.item.coin.CoinItems;
 import com.equilibrium.item.food.FoodItems;
 import com.equilibrium.item.material.MaterialItems;
@@ -132,6 +133,7 @@ public class OnServerInitialize {
         MaterialItems.ITEMS.register(modEventBus);
         FoodItems.ITEMS.register(modEventBus);
         ArmorItems.ITEMS.register(modEventBus);
+        ArmorMaterials.ARMOR_MATERIALS.register(modEventBus);
         ToolItems.ITEMS.register(modEventBus);
         CoinItems.ITEMS.register(modEventBus);
         MiscellaneousItems.ITEMS.register(modEventBus);

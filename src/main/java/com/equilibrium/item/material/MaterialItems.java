@@ -67,6 +67,32 @@ public class MaterialItems {
             properties -> new Item(properties.stacksTo(64))
     );
 
+    public static final DeferredItem<Item> ADAMANTIUM_CHAIN = ITEMS.registerItem(
+            "adamantium_chain",
+            properties -> new Item(properties.stacksTo(8))
+    );
+    public static final DeferredItem<Item> ANCIENT_METAL_CHAIN = ITEMS.registerItem(
+            "ancient_metal_chain",
+            properties -> new Item(properties.stacksTo(8))
+    );
+    public static final DeferredItem<Item> COPPER_CHAIN = ITEMS.registerItem(
+            "copper_chain",
+            properties -> new Item(properties.stacksTo(8))
+    );
+    public static final DeferredItem<Item> GOLD_CHAIN = ITEMS.registerItem(
+            "gold_chain",
+            properties -> new Item(properties.stacksTo(8))
+    );
+    public static final DeferredItem<Item> MITHRIL_CHAIN = ITEMS.registerItem(
+            "mithril_chain",
+            properties -> new Item(properties.stacksTo(8))
+    );
+    public static final DeferredItem<Item> SILVER_CHAIN = ITEMS.registerItem(
+            "silver_chain",
+            properties -> new Item(properties.stacksTo(8))
+    );
+
+
     // ---------- 粗矿（堆叠 32）
     public static final DeferredItem<Item> RAW_ADAMANTIUM = ITEMS.registerItem(
             "adamantium_raw",
