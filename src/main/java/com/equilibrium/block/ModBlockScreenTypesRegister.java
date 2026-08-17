@@ -5,6 +5,7 @@ import com.equilibrium.block.anvil.adamantium_anvil_block.AdamantiumAnvilScreenH
 import com.equilibrium.block.anvil.copper_anvil_block.CopperAnvilScreenHandler;
 import com.equilibrium.block.anvil.iron_anvil_block.IronAnvilScreenHandler;
 import com.equilibrium.block.anvil.mithril_anvil_block.MithrilAnvilScreenHandler;
+import com.equilibrium.block.crafting_table.ModCraftingScreenHandler;
 import com.equilibrium.block.enchanting_table.ModEnchantmentScreenHandler;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,6 +27,8 @@ public class ModBlockScreenTypesRegister {
     public static MenuType<MithrilAnvilScreenHandler> MITHRIL_ANVIL_SCREEN_TYPE;
     public static MenuType<AdamantiumAnvilScreenHandler> ADAMANTIUM_ANVIL_SCREEN_TYPE;
 
+    public static MenuType<ModCraftingScreenHandler> MOD_CRAFTING_SCREEN_HANDLER_SCREEN_HANDLER_TYPE;
+
     @SubscribeEvent
     public static void register(RegisterEvent event) {
         event.register(BuiltInRegistries.MENU.key(), helper -> {
@@ -40,6 +43,12 @@ public class ModBlockScreenTypesRegister {
                     BuiltInRegistries.MENU,
                     ResourceLocation.fromNamespaceAndPath(OnServerInitialize.MOD_ID, "diamond_enchantment"),
                     new MenuType<>((syncId, playerInventory) -> new ModEnchantmentScreenHandler(syncId, playerInventory, 24), FeatureFlags.VANILLA_SET)
+            );
+
+            COPPER_ANVIL_SCREEN_TYPE = Registry.register(
+                    BuiltInRegistries.MENU,
+                    ResourceLocation.fromNamespaceAndPath(OnServerInitialize.MOD_ID, "copper_anvil"),
+                    new MenuType<>(CopperAnvilScreenHandler::new, FeatureFlags.VANILLA_SET)
             );
 
             IRON_ANVIL_SCREEN_TYPE = Registry.register(
@@ -58,6 +67,11 @@ public class ModBlockScreenTypesRegister {
                     BuiltInRegistries.MENU,
                     ResourceLocation.fromNamespaceAndPath(OnServerInitialize.MOD_ID, "adamantium_anvil"),
                     new MenuType<>(AdamantiumAnvilScreenHandler::new, FeatureFlags.VANILLA_SET)
+            );
+            MOD_CRAFTING_SCREEN_HANDLER_SCREEN_HANDLER_TYPE = Registry.register(
+                    BuiltInRegistries.MENU,
+                    ResourceLocation.fromNamespaceAndPath(OnServerInitialize.MOD_ID, "mod_crafting_screen"),
+                    new MenuType<>(ModCraftingScreenHandler::new, FeatureFlags.VANILLA_SET)
             );
         });
     }

@@ -2,6 +2,7 @@ package com.equilibrium;
 
 import com.equilibrium.block.ModBlockScreenTypesRegister;
 import com.equilibrium.block.anvil.iron_anvil_block.IronAnvilScreen;
+import com.equilibrium.block.crafting_table.ModCraftingScreen;
 import com.equilibrium.block.miscellaneous.MiscellaneousBlocks;
 import com.equilibrium.block.anvil.adamantium_anvil_block.AdamantiumAnvilScreen;
 import com.equilibrium.block.anvil.copper_anvil_block.CopperAnvilScreen;
@@ -68,6 +69,7 @@ public class OnClientInitialize {
             MenuScreens.register(ModBlockScreenTypesRegister.IRON_ANVIL_SCREEN_TYPE, IronAnvilScreen::new);
             MenuScreens.register(ModBlockScreenTypesRegister.MITHRIL_ANVIL_SCREEN_TYPE, MithrilAnvilScreen::new);
             MenuScreens.register(ModBlockScreenTypesRegister.ADAMANTIUM_ANVIL_SCREEN_TYPE, AdamantiumAnvilScreen::new);
+            MenuScreens.register(ModBlockScreenTypesRegister.MOD_CRAFTING_SCREEN_HANDLER_SCREEN_HANDLER_TYPE, ModCraftingScreen::new);
 
             // 注册方块实体渲染器
             BlockEntityRenderers.register(ModBlockEntityTypes.EMERALD_ENCHANTING_TABLE_BLOCK_ENTITY_TYPE,
@@ -77,6 +79,7 @@ public class OnClientInitialize {
 
             // 注册方块渲染类型 —— 洋葱方块使用 cutout 层
             ItemBlockRenderTypes.setRenderLayer(MiscellaneousBlocks.ONION_BLOCK.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(MiscellaneousBlocks.BLUEBERRY_BUSH.get(), RenderType.cutout());
 
             // 自定义信标光束渲染
             RenderBeaconInit();
