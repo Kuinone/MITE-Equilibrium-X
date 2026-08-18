@@ -104,27 +104,6 @@ public class ConstantFleePlayerGoal extends Goal {
             return true;
         }
 
-        //至少拥有一件皮革装备时可以避免被讨厌
-        if (this.targetPlayer.getInventory().armor.stream().anyMatch(itemStack ->
-                itemStack.getItem() == Items.LEATHER_HELMET ||
-                        itemStack.getItem() == Items.LEATHER_CHESTPLATE ||
-                        itemStack.getItem() == Items.LEATHER_LEGGINGS ||
-                        itemStack.getItem() == Items.LEATHER_BOOTS)){
-            return false;
-        }
-
-        //否则必须潜行
-        if(this.mob.level().getNearestPlayer(
-                this.mob.getX(),
-                this.mob.getY(),
-                this.mob.getZ(),
-                16.0, // 检测范围
-                player -> {
-                    // 检查速度,没有潜行该生物一定逃跑
-                    return !player.isShiftKeyDown();
-                }
-        )!=null)
-            return true;
 
 
 
@@ -146,7 +125,7 @@ public class ConstantFleePlayerGoal extends Goal {
         this.lastSeenTimer = 40; // 记住2秒
 
         this.isPanicking = true;
-        return true;
+        return false;
     }
 
     @Override
