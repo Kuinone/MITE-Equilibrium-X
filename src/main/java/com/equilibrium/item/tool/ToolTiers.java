@@ -56,8 +56,8 @@ public enum ToolTiers implements Tier {
     /**
      * TODO: 木棒耐久度
      */
-    WOODEN_CUDGEL(BlockTags.AIR, 800, 0.5F, 0, 0, () -> Ingredient.of()),
-    WOODEN_CLUB(BlockTags.AIR, 1600, 0.5F, 0, 0, () -> Ingredient.of()),
+    WOODEN_CUDGEL(BlockTags.AIR, 400, 0.5F, 0, 0, () -> Ingredient.of()),
+    WOODEN_CLUB(BlockTags.AIR, 800, 0.5F, 0, 0, () -> Ingredient.of()),
     COPPER_SWORD(BlockTags.AIR, 3200, 1.0F, 0.0F, 15, () -> Ingredient.of(MaterialItems.COPPER_NUGGET)),
     SILVER_SWORD(BlockTags.AIR, 3200, 1.0F, 0.0F, 15, () -> Ingredient.of(MaterialItems.SILVER_NUGGET)),
     GOLD_SWORD(BlockTags.AIR, 3200, 2.0F, 0.0F, 25, () -> Ingredient.of(Items.GOLD_NUGGET)),
