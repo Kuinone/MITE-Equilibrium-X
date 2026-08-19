@@ -75,7 +75,7 @@ public abstract class VillageGenerationControlMixin {
             ResourceLocation id = entry.unwrapKey().get().location();
 
             // 如果不应该生成村庄,在检索到村庄和前哨站时,跳过所有村庄或前哨站
-            if (!shouldGenVillage && (id.toString().contains("village")||id.toString().contains("pillager_outpost"))) {
+            if (!shouldGenVillage && (id.toString().contains("village")||id.toString().contains("pillager_outpost")||id.toString().contains("buried_treasure")||id.toString().contains("jungle_pyramid")||id.toString().contains("desert_pyramid")||id.toString().contains("shipwreck")||id.toString().contains("ocean_ruin")||id.toString().contains("igloo")||id.toString().contains("mansion")||id.toString().contains("ruined_portal"))) {
                 continue;
             }
 
