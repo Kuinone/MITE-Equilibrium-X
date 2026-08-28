@@ -31,7 +31,7 @@
     "structure_and_dimension.strong_hold.ConcentricRingsStructurePlacementMixin",
     "structure_and_dimension.strong_hold.StrongholdGeneratorMixin",
     "structure_and_dimension.structure.structurePoolBasedGeneratorMixin",
-    "structure_and_dimension.structure.StructureGenerationControlMixin",
+    "structure_and_dimension.structure.VillageGenerationControlMixin",
     "vanilla_blocksmixin.BeetrootsBlockMixin",
     "vanilla_blocksmixin.BlockHardnessMixin",
     "vanilla_blocksmixin.FireBlockForPortalMixin",

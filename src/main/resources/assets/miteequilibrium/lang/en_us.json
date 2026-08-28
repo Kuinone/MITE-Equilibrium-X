@@ -374,8 +374,11 @@
   "container.copper_crafting": "Copper Crafting Table",
   "container.silver_crafting": "Silver Crafting Table",
   "container.iron_crafting": "Iron Crafting Table",
-  "container.diamond_crafting": "Diamond Crafting Table",
-  "container.netherite_crafting": "Netherite Crafting Table",
+  "container.gold_crafting": "Gold Crafting Table",
+  "container.obsidian_crafting": "Obsidian Crafting Table",
+  "container.ancient_metal_crafting": "Ancient Metal Crafting Table",
+  "container.mithril_crafting": "Mithril Crafting Table",
+  "container.adamantium_crafting": "Adamantium Crafting Table",
 
   "aliveandwell.crafttable.info1": "The workbench is not graded enough to synthesize！！！",
   "aliveandwell.crafttable.info2": "This item could not be synthesized 32 days ago！！！",

@@ -34,14 +34,17 @@ CraftingDifficultyHelper {
 		if(text.equals(Component.translatable("container.silver_crafting"))){
 			p -= 0.3f;//银工作台减30%
 		}
+		if(text.equals(Component.translatable("container.gold_crafting"))){
+			p -= 0.5f;//金工作台减30%
+		}
 		if(text.equals(Component.translatable("container.iron_crafting"))){
 			p -= 0.5f;//铁工作台减50%
 		}
-		if(text.equals(Component.translatable("container.diamond_crafting"))){
-			p -= 0.7f;//钻石工作台减70%
+		if(text.equals(Component.translatable("container.mithril_crafting"))){
+			p -= 0.7f;//秘银工作台减70%
 		}
-		if(text.equals(Component.translatable("container.netherite_crafting"))){
-			p -= 0.9f;//下界合金工作台减90%
+		if(text.equals(Component.translatable("container.adamantium_crafting"))){
+			p -= 0.9f;//艾德曼工作台减90%
 		}
 
 		return Math.max(getCraftingDifficultyFromMatrix(slots) * p, 15F);

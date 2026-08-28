@@ -76,6 +76,7 @@ public class ModItemTags {
     public static final TagKey<Item> CRAFT_LEVEL3 = of("craft_level3");
     public static final TagKey<Item> CRAFT_LEVEL4 = of("craft_level4");
     public static final TagKey<Item> CRAFT_LEVEL5 = of("craft_level5");
+    public static final TagKey<Item> CRAFT_LEVEL6 = of("craft_level6");
     //合成合成台时应该降低合成要求
 
     public static final TagKey<Item> CRAFT_TABLE = of("crafttable");

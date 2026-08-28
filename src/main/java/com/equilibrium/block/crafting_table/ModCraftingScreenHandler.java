@@ -66,11 +66,14 @@ public class ModCraftingScreenHandler extends RecipeBookMenu<CraftingInput, Craf
     //___________________________________________________
     private static final Map<Block, Integer> TABLE_LEVELS = Map.of(
             CraftingTableBlocks.FLINT_CRAFTING_TABLE.get(), 1,
+            CraftingTableBlocks.OBSIDIAN_CRAFTING_TABLE.get(), 1,
             CraftingTableBlocks.COPPER_CRAFTING_TABLE.get(), 2,
             CraftingTableBlocks.SILVER_CRAFTING_TABLE.get(), 2,
+            CraftingTableBlocks.GOLD_CRAFTING_TABLE.get(), 2,
             CraftingTableBlocks.IRON_CRAFTING_TABLE.get(), 3,
-            CraftingTableBlocks.MITHRIL_CRAFTING_TABLE.get(), 4,
-            CraftingTableBlocks.ADAMANTIUM_CRAFTING_TABLE.get(), 5
+            CraftingTableBlocks.ANCIENT_METAL_CRAFTING_TABLE.get(), 4,
+            CraftingTableBlocks.MITHRIL_CRAFTING_TABLE.get(), 5,
+            CraftingTableBlocks.ADAMANTIUM_CRAFTING_TABLE.get(), 6
     );
 
 
@@ -351,8 +354,8 @@ public class ModCraftingScreenHandler extends RecipeBookMenu<CraftingInput, Craf
                         craftLevel = 4;
                     else if (itemStack.is(ModItemTags.CRAFT_LEVEL5))
                         craftLevel = 5;
-                    else
-                        craftLevel = 0;
+                    else if (itemStack.is(ModItemTags.CRAFT_LEVEL6))
+                        craftLevel = 6;
                     list.add(craftLevel);
                 }
                 int maxCraftLevel =  Collections.max(list);
@@ -365,8 +368,11 @@ public class ModCraftingScreenHandler extends RecipeBookMenu<CraftingInput, Craf
 
 
                 //是否在合成工作台
-                if(this.result.getItem(0).is(ModItemTags.CRAFT_TABLE)&&!(this.input.hasAnyOf(Set.of(MaterialItems.MITHRIL_INGOT.asItem()))))
+                if(this.result.getItem(0).is(ModItemTags.CRAFT_TABLE)) {
                     maxCraftLevel--;
+                }
+
+                //player.sendSystemMessage(Component.nullToEmpty("正在合成"+this.result.getItem(0)+",等级"+maxCraftLevel+",需要等级"+craftTableLevel+"的工作台"));
                 //等级是否合法?如果游戏规则不检查合成等级,则等级永远合法
 
 

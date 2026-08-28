@@ -18,6 +18,10 @@ public class CraftingTableBlocks {
             () -> new TheCraftingTableBlock(BlockBehaviour.Properties.of()
                     .strength(0.01F).sound(SoundType.WOOD)));
 
+    public static final DeferredBlock<TheCraftingTableBlock> OBSIDIAN_CRAFTING_TABLE = BLOCKS.register("obsidian_crafting_table",
+            () -> new TheCraftingTableBlock(BlockBehaviour.Properties.of()
+                    .strength(0.01F).sound(SoundType.WOOD)));
+
     public static final DeferredBlock<TheCraftingTableBlock> COPPER_CRAFTING_TABLE = BLOCKS.register("copper_crafting_table",
             () -> new TheCraftingTableBlock(BlockBehaviour.Properties.of()
                     .strength(0.01F).sound(SoundType.WOOD)));
@@ -26,7 +30,15 @@ public class CraftingTableBlocks {
             () -> new TheCraftingTableBlock(BlockBehaviour.Properties.of()
                     .strength(0.01F).sound(SoundType.WOOD)));
 
+    public static final DeferredBlock<TheCraftingTableBlock> GOLD_CRAFTING_TABLE = BLOCKS.register("gold_crafting_table",
+            () -> new TheCraftingTableBlock(BlockBehaviour.Properties.of()
+                    .strength(0.01F).sound(SoundType.WOOD)));
+
     public static final DeferredBlock<TheCraftingTableBlock> IRON_CRAFTING_TABLE = BLOCKS.register("iron_crafting_table",
+            () -> new TheCraftingTableBlock(BlockBehaviour.Properties.of()
+                    .strength(0.01F).sound(SoundType.WOOD)));
+
+    public static final DeferredBlock<TheCraftingTableBlock> ANCIENT_METAL_CRAFTING_TABLE = BLOCKS.register("ancient_metal_crafting_table",
             () -> new TheCraftingTableBlock(BlockBehaviour.Properties.of()
                     .strength(0.01F).sound(SoundType.WOOD)));
 
@@ -55,4 +67,14 @@ public class CraftingTableBlocks {
 
     public static final DeferredItem<BlockItem> ADAMANTIUM_CRAFTING_TABLE_ITEM = ITEMS.register("adamantium_crafting_table",
             () -> new BlockItem(ADAMANTIUM_CRAFTING_TABLE.get(), new Item.Properties().stacksTo(16)));
+
+    public static final DeferredItem<BlockItem> GOLD_CRAFTING_TABLE_ITEM = ITEMS.register("gold_crafting_table",
+            () -> new BlockItem(GOLD_CRAFTING_TABLE.get(), new Item.Properties().stacksTo(16)));
+
+    public static final DeferredItem<BlockItem> OBSIDIAN_CRAFTING_TABLE_ITEM = ITEMS.register("obsidian_crafting_table",
+            () -> new BlockItem(OBSIDIAN_CRAFTING_TABLE.get(), new Item.Properties().stacksTo(16)));
+
+    public static final DeferredItem<BlockItem> ANCIENT_METAL_CRAFTING_TABLE_ITEM = ITEMS.register("ancient_metal_crafting_table",
+            () -> new BlockItem(ANCIENT_METAL_CRAFTING_TABLE.get(), new Item.Properties().stacksTo(16)));
+
 }

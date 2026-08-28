@@ -1,6 +1,9 @@
 {
   "values": [
-    "miteequilibrium:adamantium",
-    "miteequilibrium:adamantium_block"
+    "minecraft:netherite_ingot",
+    "miteequilibrium:mithril",
+    "miteequilibrium:mithril_block",
+    "minecraft:diamond"
+
   ]
 }
